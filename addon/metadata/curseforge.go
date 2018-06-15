@@ -5,6 +5,7 @@ import (
 	"io"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -25,6 +26,28 @@ func NewCurseforgeReader(r io.Reader) (*CurseforgeReader, error) {
 	return &CurseforgeReader{
 		doc: doc,
 	}, nil
+}
+
+// Downloads number of download  of the addon
+func (r *CurseforgeReader) Downloads() (int64, error) {
+	var strDownloads string
+	re := regexp.MustCompile(`^\s*(?:\d{1,3},?)+\s*`)
+	r.doc.Find("div.infobox__content > p > span").EachWithBreak(
+		func(i int, span *goquery.Selection) bool {
+			text := span.Text()
+			if re.MatchString(text) {
+				strDownloads = text
+				return false
+			}
+			return true
+		})
+	strDownloads = strings.Map(func(r rune) rune {
+		if r == ',' {
+			return -1
+		}
+		return r
+	}, strDownloads)
+	return strconv.ParseInt(strDownloads, 10, 64)
 }
 
 // LastMod of the addon
