@@ -29,7 +29,7 @@ func NewCurseforgeReader(r io.Reader) (*CurseforgeReader, error) {
 
 // LastMod of the addon
 func (r *CurseforgeReader) LastMod() (time.Time, error) {
-	stdDate := r.doc.Find("span.stats--last-updated abbr.standard-date").First()
+	stdDate := r.doc.Find("div.infobox__content abbr.standard-date").First()
 	epochStr, exists := stdDate.Attr("data-epoch")
 	if !exists {
 		return time.Time{}, errors.New("lastmod attribute not found")
@@ -60,6 +60,16 @@ func (r *CurseforgeReader) Name() (string, error) {
 		return "", errors.New("name attribute not found")
 	}
 	return titleContent, nil
+}
+
+// Upstream return the url of the project
+func (r *CurseforgeReader) Upstream() (string, error) {
+	upstreamNode := r.doc.Find("p.infobox__cta a").First()
+	upstreamHref, exists := upstreamNode.Attr("href")
+	if !exists {
+		return "", errors.New("upstream attribute not found")
+	}
+	return upstreamHref, nil
 }
 
 // GameVersion Return the addon game version

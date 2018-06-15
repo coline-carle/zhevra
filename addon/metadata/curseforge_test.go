@@ -66,7 +66,7 @@ var lastModTest = []struct {
 	fixture  string
 	expected time.Time
 }{
-	{"bigwigs", time.Unix(1527139371, 0)},
+	{"bigwigs", time.Unix(1528927095, 0)},
 }
 
 func TestCurseforgeLastMod(t *testing.T) {
