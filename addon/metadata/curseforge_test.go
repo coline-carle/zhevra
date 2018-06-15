@@ -52,9 +52,12 @@ var nameTests = []struct {
 func TestCurseforgeName(t *testing.T) {
 	for _, test := range nameTests {
 		r := readerFromFixure(t, test.fixture)
-		actual := r.Name()
+		actual, err := r.Name()
+		if err != nil {
+			t.Fatalf("unexpected error %s\n", err)
+		}
 		if actual != test.expected {
-			t.Errorf("r.Name(): expected '%s', got: '%s'", test.expected, actual)
+			t.Errorf("expected '%s', got: '%s'", test.expected, actual)
 		}
 	}
 }
@@ -71,10 +74,55 @@ func TestCurseforgeLastMod(t *testing.T) {
 		r := readerFromFixure(t, test.fixture)
 		actual, err := r.LastMod()
 		if err != nil {
-			t.Fatalf("r.Lastmod(): unexpected error %s\n", err)
+			t.Fatalf("unexpected error %s\n", err)
 		}
 		if actual != test.expected {
-			t.Errorf("r.LastMod(): expected '%s', got: '%s'", test.expected, actual)
+			t.Errorf("expected '%s', got: '%s'", test.expected, actual)
+		}
+	}
+}
+
+var gameVersionTests = []struct {
+	fixture  string
+	expected string
+}{
+	{"bigwigs", "8.0.1"},
+}
+
+func TestCurseforgeGameVersion(t *testing.T) {
+	for _, test := range gameVersionTests {
+		r := readerFromFixure(t, test.fixture)
+		actual, err := r.GameVersion()
+		if err != nil {
+			t.Fatalf("unexpected error %s\n", err)
+		}
+		if actual != test.expected {
+			t.Errorf("expected '%s', got: '%s'", test.expected, actual)
+		}
+	}
+}
+
+var descriptionTests = []struct {
+	fixture  string
+	expected string
+}{
+	{
+		"bigwigs",
+		"Modular, lightweight, non-intrusive approach to boss encounter warnings." +
+			" The efficiently coded alternative to Deadly Boss Mods (DBM) for spell &" +
+			" ability...",
+	},
+}
+
+func TestCurseforgeDescription(t *testing.T) {
+	for _, test := range descriptionTests {
+		r := readerFromFixure(t, test.fixture)
+		actual, err := r.Description()
+		if err != nil {
+			t.Fatalf("unexpected error %s\n", err)
+		}
+		if actual != test.expected {
+			t.Errorf("expected '%s', got: '%s'", test.expected, actual)
 		}
 	}
 }
