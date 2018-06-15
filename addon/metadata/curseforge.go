@@ -10,13 +10,6 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-type Metadata struct {
-	Name        string
-	Description string
-	Lastmod     time.Time
-	GameVersion string
-}
-
 // CurseforgeReader reader struct for addon page
 type CurseforgeReader struct {
 	doc *goquery.Document
@@ -61,7 +54,12 @@ func (r *CurseforgeReader) Description() (string, error) {
 
 // Name of the addon
 func (r *CurseforgeReader) Name() (string, error) {
-	return r.doc.Find("h2.name").Text(), nil
+	titleNode := r.doc.Find(`meta[property="og:title"]`).First()
+	titleContent, exists := titleNode.Attr("content")
+	if !exists {
+		return "", errors.New("name attribute not found")
+	}
+	return titleContent, nil
 }
 
 // GameVersion Return the addon game version
