@@ -10,11 +10,10 @@ cache:
     - $GOPATH/src/gopkg.in
 
 before_script:
-  - mkdir -p $GOPATH/src/$CI_PROJECT_NAMESPACE
+  - mkdir -p $GOPATH/src/wow-sweetlie
   - mkdir -p $GOPATH/src/_/builds
   - cp -r $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
   - ln -s $GOPATH/src/$GOPATH $GOPATH/src/_/builds/$PROJECT_NAME
-  - cd $GOPATH/src/$CI_PROJECT_NAMESPACE
   - make dep
 
 stages:
