@@ -18,7 +18,6 @@ before_script:
 
 stages:
   - test
-  - build
 
 unit_tests:
   stage: test
@@ -29,11 +28,6 @@ race_detector:
   stage: test
   script:
     - make race
-
-memory_sanitizer:
-  stage: test
-  script:
-    - make msan
 
 code_coverage:
   stage: test
@@ -51,8 +45,3 @@ lint_code:
   stage: test
   script:
     - make lint
-
-build:
-  stage: build
-  script:
-    - make
