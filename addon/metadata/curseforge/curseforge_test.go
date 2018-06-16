@@ -15,7 +15,7 @@ var bigwigs []byte
 
 func init() {
 	fixtures = make(map[string][]byte)
-	files, err := filepath.Glob("./fixtures/curseforge/*.html")
+	files, err := filepath.Glob("./fixtures/addonpage/*.html")
 	if err != nil {
 		log.Fatalf("error loading curseforge fixtures: %s", err)
 	}

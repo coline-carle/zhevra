@@ -23,7 +23,7 @@ func TestDecode(t *testing.T) {
 		LatestFiles:   []LatestFile{latest},
 	}
 
-	gathererDB := ClientDB{
+	gathererDB := &ClientDB{
 		Timestamp: 1528482271834,
 		Data:      []Addon{gatherer},
 	}
