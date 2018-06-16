@@ -1,11 +1,58 @@
 ---
 image: golang:1.10
 
+cache:
+  paths:
+    - /apt-cache
+    - $GOPATH/src/github.com
+    - $GOPATH/src/golang.org
+    - $GOPATH/src/google.golang.org
+    - $GOPATH/src/gopkg.in
+
+before_script:
+  - mkdir -p $GOPATH/src/$CI_PROJECT_NAMESPACE
+  - mkdir -p $GOPATH/src/_/builds
+  - cp -r $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
+  - ln -s $GOPATH/src/$GOPATH $GOPATH/src/_/builds/$PROJECT_NAME
+  - make dep
+
 stages:
+  - test
   - build
+
+unit_tests:
+  stage: test
+  script:
+    - make test
+
+race_detector:
+  stage: test
+  script:
+    - make race
+
+memory_sanitizer:
+  stage: test
+  script:
+    - make msan
+
+code_coverage:
+  stage: test
+  script:
+    - make coverage
+
+code_coverage_report:
+  stage: test
+  script:
+    - make coverhtml
+  only:
+    - master
+
+lint_code:
+  stage: test
+  script:
+    - make lint
 
 build:
   stage: build
   script:
-    - go get -t ./...
-    - go build ./...
+    - make
