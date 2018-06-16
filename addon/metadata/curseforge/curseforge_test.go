@@ -1,4 +1,4 @@
-package curseforge_test
+package curseforge
 
 import (
 	"bytes"
@@ -8,8 +8,6 @@ import (
 	"strings"
 	"testing"
 	"time"
-
-	"github.com/wow-sweetlie/zhevra/addon/metadata/curseforge"
 )
 
 var fixtures map[string][]byte
@@ -33,9 +31,9 @@ func init() {
 	}
 }
 
-func readerFromFixure(t *testing.T, name string) *curseforge.AddonPageReader {
+func readerFromFixure(t *testing.T, name string) *AddonPageReader {
 	b := bytes.NewReader(fixtures[name])
-	r, err := curseforge.NewAddonPageReader(b)
+	r, err := NewAddonPageReader(b)
 	if err != nil {
 		t.Fatalf("NewAddonPageReader: unexpected error: %s\n", err)
 	}
