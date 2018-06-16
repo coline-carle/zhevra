@@ -1,4 +1,4 @@
-package metadata
+package curseforge
 
 import (
 	"encoding/json"
@@ -12,8 +12,8 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-// CurseforgeReader reader struct for addon page
-type CurseforgeReader struct {
+// AddonPageReader reader struct for addon page
+type AddonPageReader struct {
 	doc *goquery.Document
 }
 
@@ -23,20 +23,20 @@ type TwitchButton struct {
 	ProjectName string `json:"ProjectName"`
 }
 
-// NewCurseforgeReader create a reader for curseforge addon page
-func NewCurseforgeReader(r io.Reader) (*CurseforgeReader, error) {
+// NewAddonPageReader create a reader for curseforge addon page
+func NewAddonPageReader(r io.Reader) (*AddonPageReader, error) {
 	doc, err := goquery.NewDocumentFromReader(r)
 	if err != nil {
 		return nil, err
 	}
 
-	return &CurseforgeReader{
+	return &AddonPageReader{
 		doc: doc,
 	}, nil
 }
 
 // Downloads number of download  of the addon
-func (r *CurseforgeReader) Downloads() (int64, error) {
+func (r *AddonPageReader) Downloads() (int64, error) {
 	var strDownloads string
 	re := regexp.MustCompile(`^\s*(?:\d{1,3},?)+\s*`)
 	r.doc.Find("div.infobox__content > p > span").EachWithBreak(
@@ -58,7 +58,7 @@ func (r *CurseforgeReader) Downloads() (int64, error) {
 }
 
 // LastMod of the addon
-func (r *CurseforgeReader) LastMod() (time.Time, error) {
+func (r *AddonPageReader) LastMod() (time.Time, error) {
 	stdDate := r.doc.Find("div.infobox__content abbr.standard-date").First()
 	epochStr, exists := stdDate.Attr("data-epoch")
 	if !exists {
@@ -73,7 +73,7 @@ func (r *CurseforgeReader) LastMod() (time.Time, error) {
 }
 
 // Description of he addon
-func (r *CurseforgeReader) Description() (string, error) {
+func (r *AddonPageReader) Description() (string, error) {
 	descNode := r.doc.Find(`meta[property="og:description"]`).First()
 	descContent, exists := descNode.Attr("content")
 	if !exists {
@@ -83,7 +83,7 @@ func (r *CurseforgeReader) Description() (string, error) {
 }
 
 // ID cuse id of the addon
-func (r *CurseforgeReader) ID() (int64, error) {
+func (r *AddonPageReader) ID() (int64, error) {
 	twitchNode := r.doc.Find(`a.button--twitch`)
 	jsonData, exists := twitchNode.Attr("data-action-value")
 	if !exists {
@@ -98,7 +98,7 @@ func (r *CurseforgeReader) ID() (int64, error) {
 }
 
 // Name of the addon
-func (r *CurseforgeReader) Name() (string, error) {
+func (r *AddonPageReader) Name() (string, error) {
 	titleNode := r.doc.Find(`meta[property="og:title"]`).First()
 	titleContent, exists := titleNode.Attr("content")
 	if !exists {
@@ -108,7 +108,7 @@ func (r *CurseforgeReader) Name() (string, error) {
 }
 
 // Upstream return the url of the project
-func (r *CurseforgeReader) Upstream() (string, error) {
+func (r *AddonPageReader) Upstream() (string, error) {
 	upstreamNode := r.doc.Find("p.infobox__cta a").First()
 	upstreamHref, exists := upstreamNode.Attr("href")
 	if !exists {
@@ -118,7 +118,7 @@ func (r *CurseforgeReader) Upstream() (string, error) {
 }
 
 // GameVersion Return the addon game version
-func (r *CurseforgeReader) GameVersion() (string, error) {
+func (r *AddonPageReader) GameVersion() (string, error) {
 	re := regexp.MustCompile(`\d{1,2}\.\d{1,2}.\d{1,2}`)
 	spanText := r.doc.Find("span.stats--game-version").Text()
 	return re.FindString(spanText), nil
