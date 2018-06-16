@@ -1,6 +1,6 @@
 PROJECT_NAME := "zhevra"
 PKG := "gitlab.com/wow-sweetlie/$(PROJECT_NAME)"
-PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
+PKG_LIST := $(shell go list ./... | grep -v /vendor/)
 GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/ | grep -v _test.go)
 
 .PHONY: all dep build clean test coverage coverhtml lint
@@ -27,6 +27,7 @@ coverhtml: ## Generate global code coverage report in HTML
 
 dep: ## Get the dependencies
 	@go get -v -d ./...
+	@go get -u github.com/golang/lint/golint
 
 build: dep ## Build the binary file
 	@go build -i -v $(PKG)
