@@ -13,7 +13,7 @@ before_script:
   - mkdir -p $GOPATH/src/gitlab.com/$CI_PROJECT_NAMESPACE
   - mkdir -p $GOPATH/src/_/builds
   - ln -s $GOPATH/src/gitlab.com/wow-sweetlie $GOPATH/src/_/builds/
-  - ls -lh $GOPATH/src/_builds/*
+  - ls -lh $GOPATH/src/_/builds/*
   - cp -r $CI_PROJECT_DIR/* $GOPATH/src/gitlab.com/$CI_PROJECT_NAMESPACE/
   - make dep
 
