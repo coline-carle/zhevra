@@ -14,6 +14,7 @@ before_script:
   - mkdir -p $GOPATH/src/_/builds
   - cp -r $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
   - ln -s $GOPATH/src/$GOPATH $GOPATH/src/_/builds/$PROJECT_NAME
+  - cd $GOPATH/src/$CI_PROJECT_NAMESPACE
   - make dep
 
 stages:
