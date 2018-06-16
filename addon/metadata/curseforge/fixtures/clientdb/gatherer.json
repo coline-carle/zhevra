@@ -1,0 +1,137 @@
+{
+  "timestamp": 1528482271834,
+  "data": [
+    {
+      "Id": 32,
+      "Name": "Gatherer",
+      "Authors": [
+        {
+          "Name": "Esamynn",
+          "Url": "https://www.curseforge.com/members/Esamynn.aspx"
+        }
+      ],
+      "WebSiteURL": "https://www.curseforge.com/wow/addons/gatherer",
+      "GameId": 1,
+      "Summary": "Helps track the closest plants, deposits and treasure locations on your minimap.",
+      "DefaultFileId": 2482102,
+      "CommentCount": 0,
+      "DownloadCount": 15465595,
+      "Rating": 0,
+      "InstallCount": 0,
+      "IconId": 1,
+      "LatestFiles": [
+        {
+          "Id": 2482102,
+          "FileName": "7.3.1",
+          "FileNameOnDisk": "Gatherer-7.3.1.zip",
+          "FileDate": "2017-09-20T13:00:12.89",
+          "ReleaseType": 1,
+          "FileStatus": 1,
+          "DownloadURL": "https://files.forgecdn.net/files/2482/102/Gatherer-7.3.1.zip",
+          "IsAlternate": false,
+          "AlternateFileId": 0,
+          "Dependencies": [
+            {
+              "AddOnId": 26799,
+              "Type": 3
+            }
+          ],
+          "IsAvailable": true,
+          "Modules": [
+            {
+              "Foldername": "Gatherer",
+              "Fingerprint": 3785330930
+            },
+            {
+              "Foldername": "SlideBar",
+              "Fingerprint": 1977511019
+            },
+            {
+              "Foldername": "!Swatter",
+              "Fingerprint": 1122147061
+            },
+            {
+              "Foldername": "Gatherer_HUD",
+              "Fingerprint": 2170801839
+            }
+          ],
+          "PackageFingerprint": 2665345321,
+          "GameVersion": [
+            "7.3.0"
+          ]
+        }
+      ],
+      "Categories": [
+        {
+          "Id": 1011,
+          "Name": "Map & Minimap",
+          "URL": "https:/www.curseforge.com/addons/wow/category/map-minimap"
+        },
+        {
+          "Id": 1049,
+          "Name": "Herbalism",
+          "URL": "https:/www.curseforge.com/addons/wow/category/herbalism"
+        },
+        {
+          "Id": 1052,
+          "Name": "Mining",
+          "URL": "https:/www.curseforge.com/addons/wow/category/mining"
+        },
+        {
+          "Id": 1103,
+          "Name": "Archaeology",
+          "URL": "https:/www.curseforge.com/addons/wow/category/archaeology"
+        }
+      ],
+      "PrimaryAuthorName": "Esamynn",
+      "ExternalUrl": null,
+      "Status": 1,
+      "Stage": 1,
+      "DonationUrl": null,
+      "PrimaryCategoryId": 1011,
+      "PrimaryCategoryName": "Map & Minimap",
+      "PrimaryCategoryAvatarUrl": "https://media.forgecdn.net/avatars/54/447/636135209673867865.png",
+      "Likes": 0,
+      "CategorySection": {
+        "ID": 1,
+        "GameID": 1,
+        "Name": "Addons",
+        "PackageType": 1,
+        "Path": "interface\\addons",
+        "InitialInclusionPattern": "(?i)^([^/]+)[\\\\/]\\1\\.toc$",
+        "ExtraIncludePattern": "(?i)^[^/\\\\]+[/\\\\]Bindings\\.xml$"
+      },
+      "PackageType": 1,
+      "AvatarUrl": null,
+      "GameVersionLatestFiles": [
+        {
+          "GameVesion": "7.0.3",
+          "ProjectFileID": 944471,
+          "ProjectFileName": "7.0.1",
+          "FileType": 1
+        },
+        {
+          "GameVesion": "7.1.0",
+          "ProjectFileID": 2366536,
+          "ProjectFileName": "7.0.4",
+          "FileType": 1
+        },
+        {
+          "GameVesion": "7.2.0",
+          "ProjectFileID": 2404871,
+          "ProjectFileName": "7.0.5",
+          "FileType": 1
+        },
+        {
+          "GameVesion": "7.3.0",
+          "ProjectFileID": 2482102,
+          "ProjectFileName": "7.3.1",
+          "FileType": 1
+        }
+      ],
+      "IsFeatured": 0,
+      "PopularityScore": 3755.996,
+      "GamePopularityRank": 72
+    }
+  ]
+}
