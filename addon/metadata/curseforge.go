@@ -1,6 +1,7 @@
 package metadata
 
 import (
+	"encoding/json"
 	"errors"
 	"io"
 	"regexp"
@@ -14,6 +15,12 @@ import (
 // CurseforgeReader reader struct for addon page
 type CurseforgeReader struct {
 	doc *goquery.Document
+}
+
+// TwitchButton on addon page for download install
+type TwitchButton struct {
+	ProjectID   int64  `json:"ProjectID"`
+	ProjectName string `json:"ProjectName"`
 }
 
 // NewCurseforgeReader create a reader for curseforge addon page
@@ -73,6 +80,21 @@ func (r *CurseforgeReader) Description() (string, error) {
 		return "", errors.New("description attribute not found")
 	}
 	return descContent, nil
+}
+
+// ID cuse id of the addon
+func (r *CurseforgeReader) ID() (int64, error) {
+	twitchNode := r.doc.Find(`a.button--twitch`)
+	jsonData, exists := twitchNode.Attr("data-action-value")
+	if !exists {
+		return 0, errors.New("twitchnode not found")
+	}
+	var twitchButton TwitchButton
+	err := json.NewDecoder(strings.NewReader(jsonData)).Decode(&twitchButton)
+	if err != nil {
+		return 0, err
+	}
+	return twitchButton.ProjectID, nil
 }
 
 // Name of the addon

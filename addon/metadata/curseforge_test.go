@@ -82,6 +82,26 @@ func TestCurseforgeLastMod(t *testing.T) {
 	}
 }
 
+var idTests = []struct {
+	fixture  string
+	expected int64
+}{
+	{"bigwigs", 2382},
+}
+
+func TestCurseforgeID(t *testing.T) {
+	for _, test := range idTests {
+		r := readerFromFixure(t, test.fixture)
+		actual, err := r.ID()
+		if err != nil {
+			t.Fatalf("unexpected error %s\n", err)
+		}
+		if actual != test.expected {
+			t.Errorf("expected '%d', got: '%d'", test.expected, actual)
+		}
+	}
+}
+
 var downloadsTests = []struct {
 	fixture  string
 	expected int64
