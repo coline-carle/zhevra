@@ -19,6 +19,7 @@ before_script:
 
 stages:
   - test
+  - publish
 
 unit_tests:
   stage: test
