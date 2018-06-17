@@ -47,7 +47,7 @@ var nameTests = []struct {
 	{"bigwigs", "BigWigs Bossmods"},
 }
 
-func TestCurseforgeName(t *testing.T) {
+func TestAddonPageName(t *testing.T) {
 	for _, test := range nameTests {
 		r := readerFromFixure(t, test.fixture)
 		actual, err := r.Name()
@@ -67,7 +67,7 @@ var lastModTest = []struct {
 	{"bigwigs", time.Unix(1528927095, 0)},
 }
 
-func TestCurseforgeLastMod(t *testing.T) {
+func TestAddonPageLastMod(t *testing.T) {
 	for _, test := range lastModTest {
 		r := readerFromFixure(t, test.fixture)
 		actual, err := r.LastMod()
@@ -87,7 +87,7 @@ var idTests = []struct {
 	{"bigwigs", 2382},
 }
 
-func TestCurseforgeID(t *testing.T) {
+func TestAddonPageID(t *testing.T) {
 	for _, test := range idTests {
 		r := readerFromFixure(t, test.fixture)
 		actual, err := r.ID()
@@ -107,7 +107,7 @@ var downloadsTests = []struct {
 	{"bigwigs", 33340527},
 }
 
-func TestCurseforgeDownloads(t *testing.T) {
+func TestAddonPageDownloads(t *testing.T) {
 	for _, test := range downloadsTests {
 		r := readerFromFixure(t, test.fixture)
 		actual, err := r.Downloads()
@@ -127,7 +127,7 @@ var gameVersionTests = []struct {
 	{"bigwigs", "8.0.1"},
 }
 
-func TestCurseforgeGameVersion(t *testing.T) {
+func TestAddonPageGameVersion(t *testing.T) {
 	for _, test := range gameVersionTests {
 		r := readerFromFixure(t, test.fixture)
 		actual, err := r.GameVersion()
@@ -152,7 +152,7 @@ var descriptionTests = []struct {
 	},
 }
 
-func TestCurseforgeDescription(t *testing.T) {
+func TestAddonPageDescription(t *testing.T) {
 	for _, test := range descriptionTests {
 		r := readerFromFixure(t, test.fixture)
 		actual, err := r.Description()
@@ -175,7 +175,7 @@ var upstreamTests = []struct {
 	},
 }
 
-func TestCurseforgeUpstream(t *testing.T) {
+func TestAddonPageUpstream(t *testing.T) {
 	for _, test := range upstreamTests {
 		r := readerFromFixure(t, test.fixture)
 		actual, err := r.Upstream()
