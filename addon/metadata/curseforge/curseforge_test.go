@@ -164,3 +164,26 @@ func TestCurseforgeDescription(t *testing.T) {
 		}
 	}
 }
+
+var upstreamTests = []struct {
+	fixture  string
+	expected string
+}{
+	{
+		"bigwigs",
+		"https://wow.curseforge.com/projects/big-wigs",
+	},
+}
+
+func TestCurseforgeUpstream(t *testing.T) {
+	for _, test := range upstreamTests {
+		r := readerFromFixure(t, test.fixture)
+		actual, err := r.Upstream()
+		if err != nil {
+			t.Fatalf("unexpected error %s\n", err)
+		}
+		if actual != test.expected {
+			t.Errorf("expected '%s', got: '%s'", test.expected, actual)
+		}
+	}
+}
