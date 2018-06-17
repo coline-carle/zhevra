@@ -41,8 +41,23 @@ code_coverage_report:
     - make coverhtml
   only:
     - master
+  artifacts:
+    paths:
+      - coverage.html
 
 lint_code:
   stage: test
   script:
     - make lint
+
+pages:
+  stage: publish
+  script:
+    - mkdir public
+    - mv coverage.html public/
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - master
