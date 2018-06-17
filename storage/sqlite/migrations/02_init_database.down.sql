@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS addon;
+DROP TABLE IF EXISTS curse_addon;
+DROP TABLE IF EXISTS curse_release;
