@@ -10,7 +10,6 @@ import (
 )
 
 func TestIntegrationDecode(t *testing.T) {
-	t.SkipNow()
 	fixture, err := os.Open("./fixtures/clientdb/complete.json")
 	if err != nil {
 		t.Fatalf("error loading fixture: %s", err)
