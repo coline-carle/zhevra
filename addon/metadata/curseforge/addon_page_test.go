@@ -11,7 +11,6 @@ import (
 )
 
 var fixtures map[string][]byte
-var bigwigs []byte
 
 func init() {
 	fixtures = make(map[string][]byte)
@@ -27,7 +26,6 @@ func init() {
 			log.Fatalf("error loading fixture: %s - %s", file, err)
 		}
 		fixtures[name] = data
-		log.Printf("loaded: %s - %s\n", name, file)
 	}
 }
 
