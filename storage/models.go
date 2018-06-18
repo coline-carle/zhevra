@@ -17,13 +17,14 @@ type CurseAddon struct {
 type CurseRelease struct {
 	ID          int64
 	Filename    string
-	Date        time.Time
-	DownloadURL string
+	CreatedAt   time.Time
+	URL         string
 	GameVersion string
 	AddonID     int64
 	addon       *CurseAddon
 }
 
 var (
-	ErrCurseAddonDoesNotExists = errors.New("curse addon does not exist")
+	ErrCurseAddonDoesNotExists   = errors.New("curse addon does not exist")
+	ErrCurseReleaseDoesNotExists = errors.New("curse addon release does not exist")
 )

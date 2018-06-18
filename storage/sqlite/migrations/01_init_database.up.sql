@@ -13,9 +13,9 @@ CREATE TABLE IF NOT EXISTS curse_addon (
 CREATE TABLE IF NOT EXISTS curse_release (
   id INTEGER PRIMARY KEY,
   filename TEXT,
-  date INTEGER,
-  downloadurl TEXT,
-  gameversion TEXT,
-  addonid INTEGER,
-  FOREIGN KEY(addonid) REFERENCES curse_addon(id)
+  created_at INTEGER,
+  url TEXT,
+  game_version TEXT,
+  addon_id INTEGER,
+  FOREIGN KEY(addon_id) REFERENCES curse_addon(id)
 );
