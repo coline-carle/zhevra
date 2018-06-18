@@ -1,14 +1,13 @@
-package store
+package storage
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
-type Addon struct {
-	ID   int64
-	Name string
-}
-
-type CurseProvider struct {
+type CurseAddon struct {
 	ID            int64
+	Name          string
 	URL           string
 	Summary       string
 	DownloadCount float64
@@ -21,4 +20,10 @@ type CurseRelease struct {
 	Date        time.Time
 	DownloadURL string
 	GameVersion string
+	AddonID     int64
+	addon       *CurseAddon
 }
+
+var (
+	ErrCurseAddonDoesNotExists = errors.New("curse addon does not exist")
+)

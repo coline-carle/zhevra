@@ -6,7 +6,6 @@ import (
 	"github.com/golang-migrate/migrate"
 	bindata "github.com/golang-migrate/migrate/source/go_bindata"
 	"github.com/pkg/errors"
-	"github.com/wow-sweetlie/zhevra/storage"
 	"github.com/wow-sweetlie/zhevra/storage/sqlite/migrations"
 
 	// sqlite3 driver for migrations
@@ -15,44 +14,21 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-// StorageSQLite define sorage type
-type StorageSQLite struct {
+// Storage define storage type
+type Storage struct {
 	*sql.DB
 }
 
-func NewStorage(filename string) (*StorageSQLite, error) {
+func NewStorage(filename string) (*Storage, error) {
 	db, err := sql.Open("sqlite3", filename)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to open db")
 	}
-	return &StorageSQLite{db}, nil
-}
-
-func (s *StorageSQLite) CreateAddon(tx *sql.Tx, addon *storage.Addon) (id int,
-	err error) {
-	err = tx.QueryRow(
-		"INSERT INTO addon (name) VALUES(?)",
-		addon.Name,
-	).Scan(&id)
-	if err != nil {
-		return 0, errors.Wrap(err, "failed to CreateAddon tx")
-	}
-	return id, nil
-}
-
-func (s *StorageSQLite) CreateCurseAddon(tx *sql.Tx, addon *storage.Addon) error {
-	_, err := tx.Exec(
-		"INSERT INTO addon (name) VALUES(?)",
-		addon.Name,
-	)
-	if err != nil {
-		return errors.Wrap(err, "failed to CreateAddon tx")
-	}
-	return nil
+	return &Storage{db}, nil
 }
 
 // Migrate the database
-func (s *StorageSQLite) Migrate() error {
+func (s *Storage) Migrate() error {
 	assets := bindata.Resource(migrations.AssetNames(),
 		func(name string) ([]byte, error) {
 			return migrations.Asset(name)
@@ -74,4 +50,30 @@ func (s *StorageSQLite) Migrate() error {
 	}
 	m.Up()
 	return nil
+}
+
+func (s *Storage) Tx(fn func(*sql.Tx) error) error {
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return errors.Wrap(err, "begin transaction")
+	}
+
+	err = fn(tx)
+	if err != nil {
+		if err2 := tx.Rollback(); err2 != nil {
+			errors.Wrap(err2, "transaction rollback failed")
+		}
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return errors.Wrap(err, "commit transaction")
+	}
+	return nil
+
+}
+
+func (s *Storage) Close() {
+	s.DB.Close()
 }

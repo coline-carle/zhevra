@@ -1,10 +1,7 @@
-CREATE TABLE IF NOT EXISTS addon (
-  id INTEGER PRIMARY KEY ASC,
-  name TEXT
-);
 
 CREATE TABLE IF NOT EXISTS curse_addon (
   id INTEGER PRIMARY KEY,
+  name TEXT,
   url TEXT,
   summary TEXT,
   downloadcount INTEGER,
