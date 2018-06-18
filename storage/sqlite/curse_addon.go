@@ -39,7 +39,7 @@ func (s *Storage) GetCurseAddon(
 			name,
 			url,
 			summary,
-			downloadcount,
+			downloadcount
 		FROM
 			curse_addon
 		WHERE
@@ -56,7 +56,7 @@ func (s *Storage) GetCurseAddon(
 			err = storage.ErrCurseAddonDoesNotExists
 			return nil, errors.Wrapf(err, "id %d", id)
 		}
-		return nil, errors.Wrap(err, "CreateCurseAddon failed")
+		return nil, errors.Wrap(err, "GetCurseAddon failed")
 	}
 	return addon, nil
 }
