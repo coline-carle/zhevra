@@ -11,7 +11,7 @@ type CurseAddon struct {
 	Name          string
 	URL           string
 	Summary       string
-	DownloadCount float64
+	DownloadCount int64
 	Releases      []CurseRelease
 }
 

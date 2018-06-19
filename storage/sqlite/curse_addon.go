@@ -9,7 +9,7 @@ import (
 
 // CreateCurseAddon add a new addon from curse to the database
 func (s *Storage) CreateCurseAddon(
-	tx *sql.Tx, addon *storage.CurseAddon) error {
+	tx *sql.Tx, addon storage.CurseAddon) error {
 	_, err := tx.Exec(
 		`INSERT INTO curse_addon (
 			id,
@@ -28,14 +28,21 @@ func (s *Storage) CreateCurseAddon(
 	if err != nil {
 		return errors.Wrap(err, "failed to CreateCurseAddon")
 	}
+
+	for _, release := range addon.Releases {
+		err = s.CreateCurseRelease(tx, release)
+		if err != nil {
+			return errors.Wrap(err, "failed to create release from CreateCurseAddon")
+		}
+	}
 	return nil
 }
 
 // GetCurseAddon fetch a curse addon from the databaze by ID
 // id curse id of the addon
 func (s *Storage) GetCurseAddon(
-	tx *sql.Tx, id int64) (*storage.CurseAddon, error) {
-	addon := &storage.CurseAddon{}
+	tx *sql.Tx, id int64) (storage.CurseAddon, error) {
+	addon := storage.CurseAddon{}
 	err := tx.QueryRow(`
 		SELECT
 			id,
@@ -57,9 +64,10 @@ func (s *Storage) GetCurseAddon(
 	if err != nil {
 		if errors.Cause(err) == sql.ErrNoRows {
 			err = storage.ErrCurseAddonDoesNotExists
-			return nil, errors.Wrapf(err, "id %d", id)
+			return addon, errors.Wrapf(err, "id %d", id)
 		}
-		return nil, errors.Wrap(err, "GetCurseAddon failed")
+		return addon, errors.Wrap(err, "GetCurseAddon failed")
 	}
-	return addon, nil
+	addon.Releases, err = s.FindCurseReleasesByAddonID(tx, id)
+	return addon, err
 }
