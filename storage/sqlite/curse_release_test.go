@@ -29,9 +29,9 @@ func TestCreateCurseRelease(t *testing.T) {
 		AddonID:     addon.ID,
 	}
 	err = si.Tx(func(tx *sql.Tx) error {
-		err := si.CreateCurseAddon(tx, addon)
-		if err != nil {
-			return err
+		err2 := si.CreateCurseAddon(tx, addon)
+		if err2 != nil {
+			return err2
 		}
 		return si.CreateCurseRelease(tx, release)
 	})

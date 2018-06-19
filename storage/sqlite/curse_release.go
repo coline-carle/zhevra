@@ -8,6 +8,7 @@ import (
 	"github.com/wow-sweetlie/zhevra/storage"
 )
 
+// CreateCurseRelease save new addon in the database
 func (s *Storage) CreateCurseRelease(
 	tx *sql.Tx, release *storage.CurseRelease) error {
 	_, err := tx.Exec(
@@ -33,6 +34,7 @@ func (s *Storage) CreateCurseRelease(
 	return nil
 }
 
+// GetCurseRelease fetch and addon by ID
 func (s *Storage) GetCurseRelease(
 	tx *sql.Tx, id int64) (*storage.CurseRelease, error) {
 	release := &storage.CurseRelease{}

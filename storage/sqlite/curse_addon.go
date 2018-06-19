@@ -7,6 +7,7 @@ import (
 	"github.com/wow-sweetlie/zhevra/storage"
 )
 
+// CreateCurseAddon add a new addon from curse to the database
 func (s *Storage) CreateCurseAddon(
 	tx *sql.Tx, addon *storage.CurseAddon) error {
 	_, err := tx.Exec(
@@ -30,6 +31,8 @@ func (s *Storage) CreateCurseAddon(
 	return nil
 }
 
+// GetCurseAddon fetch a curse addon from the databaze by ID
+// id curse id of the addon
 func (s *Storage) GetCurseAddon(
 	tx *sql.Tx, id int64) (*storage.CurseAddon, error) {
 	addon := &storage.CurseAddon{}

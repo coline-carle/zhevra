@@ -19,6 +19,8 @@ type Storage struct {
 	*sql.DB
 }
 
+// NewStorage create a new storage using sqlite3 database
+// filename name of the sqlite3 database file
 func NewStorage(filename string) (*Storage, error) {
 	db, err := sql.Open("sqlite3", filename)
 	if err != nil {
@@ -39,6 +41,9 @@ func (s *Storage) Migrate() error {
 		return err
 	}
 	database, err := sqlite3.WithInstance(s.DB, &sqlite3.Config{})
+	if err != nil {
+		return err
+	}
 	m, err := migrate.NewWithInstance(
 		"go-bindata",
 		source,
@@ -48,10 +53,14 @@ func (s *Storage) Migrate() error {
 	if err != nil {
 		return err
 	}
-	m.Up()
-	return nil
+	err = m.Up()
+	if err == migrate.ErrNoChange {
+		return nil
+	}
+	return err
 }
 
+// Tx wrapper for a new databse transaction
 func (s *Storage) Tx(fn func(*sql.Tx) error) error {
 	tx, err := s.DB.Begin()
 	if err != nil {
@@ -61,7 +70,7 @@ func (s *Storage) Tx(fn func(*sql.Tx) error) error {
 	err = fn(tx)
 	if err != nil {
 		if err2 := tx.Rollback(); err2 != nil {
-			errors.Wrap(err2, "transaction rollback failed")
+			return errors.Wrap(err2, "transaction rollback failed")
 		}
 		return err
 	}
@@ -74,6 +83,7 @@ func (s *Storage) Tx(fn func(*sql.Tx) error) error {
 
 }
 
-func (s *Storage) Close() {
-	s.DB.Close()
+// Close close the database
+func (s *Storage) Close() error {
+	return s.DB.Close()
 }

@@ -27,6 +27,9 @@ func TestIntegrationDecode(t *testing.T) {
 
 func TestDecode(t *testing.T) {
 	date, err := time.Parse(dateLayout, "2017-09-20T13:00:12.89")
+	if err != nil {
+		t.Fatalf("error parsing date: %s", date)
+	}
 	latest := Release{
 		ID:          2482102,
 		Filename:    "7.3.1",
