@@ -30,6 +30,7 @@ func (s *Storage) CreateCurseAddon(
 	}
 
 	for _, release := range addon.Releases {
+		release.AddonID = addon.ID
 		err = s.CreateCurseRelease(tx, release)
 		if err != nil {
 			return errors.Wrap(err, "failed to create release from CreateCurseAddon")

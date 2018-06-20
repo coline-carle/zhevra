@@ -19,7 +19,7 @@ type ClientDB struct {
 type Addon struct {
 	ID            int64     `json:"Id"`
 	Name          string    `json:"Name"`
-	URL           string    `json:"WebSiteIURL"`
+	URL           string    `json:"WebSiteURL"`
 	Summary       string    `json:"Summary"`
 	DownloadCount float64   `json:"DownloadCount"`
 	Releases      []Release `json:"LatestFiles"`
