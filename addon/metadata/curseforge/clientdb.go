@@ -32,6 +32,13 @@ type Release struct {
 	CreatedAt   dbDate   `json:"Filedate"`
 	URL         string   `json:"DownloadURL"`
 	GameVersion []string `json:"GameVersion"`
+	Modules     []Module `json:"Modules"`
+}
+
+// Module repesent the different directories in addons folder
+type Module struct {
+	Fingerprint int64
+	Foldername  string
 }
 
 type dbDate struct {
