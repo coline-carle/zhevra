@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/wow-sweetlie/zhevra/storage"
 )
 
 func TestIntegrationDecode(t *testing.T) {
@@ -33,8 +34,8 @@ func TestDecode(t *testing.T) {
 	latest := Release{
 		ID:          2482102,
 		Filename:    "7.3.1",
-		Date:        dbDate{date},
-		DownloadURL: "https://files.forgecdn.net/files/2482/102/Gatherer-7.3.1.zip",
+		CreatedAt:   dbDate{date},
+		URL:         "https://files.forgecdn.net/files/2482/102/Gatherer-7.3.1.zip",
 		GameVersion: []string{"7.3.0"},
 	}
 	gatherer := Addon{
@@ -58,5 +59,25 @@ func TestDecode(t *testing.T) {
 		t.Fatalf("unexpected error: %s", err)
 	}
 	assert.Equal(t, gathererDB, db)
+
+	// now test convertion into our models
+
+	curseRelease := storage.CurseRelease{
+		ID:          2482102,
+		Filename:    "7.3.1",
+		CreatedAt:   date,
+		URL:         "https://files.forgecdn.net/files/2482/102/Gatherer-7.3.1.zip",
+		GameVersion: "7.3.0",
+	}
+	expectedAddon := storage.CurseAddon{
+		ID:            32,
+		Name:          "Gatherer",
+		Summary:       "Helps track the closest plants, deposits and treasure locations on your minimap.",
+		DownloadCount: 15465595,
+		Releases:      []storage.CurseRelease{curseRelease},
+	}
+
+	curseAddon := NewCurseAddon(gatherer)
+	assert.Equal(t, expectedAddon, curseAddon)
 
 }
