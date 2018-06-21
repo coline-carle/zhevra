@@ -1,11 +1,13 @@
 package cmd
 
 import (
+	"database/sql"
 	"fmt"
 	"io/ioutil"
 	"log"
 
 	"github.com/spf13/cobra"
+	"github.com/wow-sweetlie/zhevra/storage"
 	"github.com/wow-sweetlie/zhevra/storage/sqlite"
 )
 
@@ -34,7 +36,15 @@ func runScanCmd(cmd *cobra.Command, args []string) {
 
 	for _, f := range files {
 		if f.IsDir() {
-			fmt.Println(f.Name())
+			var matchingAddons []storage.CurseAddon
+			err = addondb.Tx(func(tx *sql.Tx) error {
+				matchingAddons, err = addondb.FindAddonsWithDirectoryName(tx, f.Name())
+				return err
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Printf("directory: %s | addons match: %d\n", f.Name(), len(matchingAddons))
 		}
 	}
 }
