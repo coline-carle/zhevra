@@ -15,6 +15,12 @@ type CurseAddon struct {
 	Releases      []CurseRelease
 }
 
+// CurseFolder is a folder in addons directory
+type CurseFolder struct {
+	ReleaseID int64
+	Name      string
+}
+
 // CurseRelease represent a release of an addon handled by curse provider
 type CurseRelease struct {
 	ID          int64
@@ -23,7 +29,7 @@ type CurseRelease struct {
 	URL         string
 	GameVersion string
 	AddonID     int64
-	addon       *CurseAddon
+	Directories []string
 }
 
 var (

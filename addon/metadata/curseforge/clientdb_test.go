@@ -90,6 +90,7 @@ func TestDecode(t *testing.T) {
 		CreatedAt:   date,
 		URL:         "https://files.forgecdn.net/files/2482/102/Gatherer-7.3.1.zip",
 		GameVersion: "7.3.0",
+		Directories: []string{"Gatherer", "SlideBar", "!Swatter", "Gatherer_HUD"},
 	}
 	expectedAddon := storage.CurseAddon{
 		ID:            32,

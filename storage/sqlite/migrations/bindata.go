@@ -2,6 +2,8 @@
 // sources:
 // 01_init_database.down.sql
 // 01_init_database.up.sql
+// 02_add_directory_table.down.sql
+// 02_add_directory_table.up.sql
 package migrations
 
 import (
@@ -107,6 +109,46 @@ func _01_init_databaseUpSql() (*asset, error) {
 	return a, nil
 }
 
+var __02_add_directory_tableDownSql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x72\x09\xf2\x0f\x50\x08\x71\x74\xf2\x71\x55\xf0\x74\x53\x70\x8d\xf0\x0c\x0e\x09\x56\x48\x2e\x2d\x2a\x4e\x8d\x2f\x4a\xcd\x49\x4d\x2c\x4e\x8d\x4f\xc9\x2c\x4a\x4d\x2e\xc9\x2f\xaa\xb4\xe6\x02\x04\x00\x00\xff\xff\xdf\xa2\xb7\x73\x2e\x00\x00\x00")
+
+func _02_add_directory_tableDownSqlBytes() ([]byte, error) {
+	return bindataRead(
+		__02_add_directory_tableDownSql,
+		"02_add_directory_table.down.sql",
+	)
+}
+
+func _02_add_directory_tableDownSql() (*asset, error) {
+	bytes, err := _02_add_directory_tableDownSqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "02_add_directory_table.down.sql", size: 46, mode: os.FileMode(420), modTime: time.Unix(1529575953, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var __02_add_directory_tableUpSql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x5c\x8e\xc1\x0a\x82\x40\x18\x84\xef\xfb\x14\x73\x74\xc1\x37\xe8\x64\x32\xca\x92\xad\xf1\xfb\x07\x7a\x92\xd0\x3d\x2c\x04\xc1\x5a\x87\xde\x3e\x0a\xca\xea\x3a\xf3\x7d\xc3\x94\xc2\x42\x09\x2d\xb6\x0d\xe1\x2a\xf8\x56\xc1\xde\x75\xda\x61\xba\xa5\x25\x8c\x29\x9c\xc3\x69\x09\xe3\x1c\x53\x98\xae\x97\x74\xcf\x0c\xf0\x0e\xe3\x0c\xe7\x95\x35\xe5\x25\xfa\x63\xd3\xe4\x06\xf8\xb0\x50\xf6\xfa\x53\x1d\xc4\xed\x0b\x19\xb0\xe3\x80\x6c\x9d\xc9\x57\xc7\x1a\xa0\x6a\x85\xae\xf6\x4f\xea\x0b\xb2\x10\x56\x14\xfa\x92\x7f\xef\xb2\x38\x5b\x63\x37\xe6\x11\x00\x00\xff\xff\x35\x52\x53\x63\xce\x00\x00\x00")
+
+func _02_add_directory_tableUpSqlBytes() ([]byte, error) {
+	return bindataRead(
+		__02_add_directory_tableUpSql,
+		"02_add_directory_table.up.sql",
+	)
+}
+
+func _02_add_directory_tableUpSql() (*asset, error) {
+	bytes, err := _02_add_directory_tableUpSqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "02_add_directory_table.up.sql", size: 206, mode: os.FileMode(420), modTime: time.Unix(1529575924, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
 // Asset loads and returns the asset for the given name.
 // It returns an error if the asset could not be found or
 // could not be loaded.
@@ -161,6 +203,8 @@ func AssetNames() []string {
 var _bindata = map[string]func() (*asset, error){
 	"01_init_database.down.sql": _01_init_databaseDownSql,
 	"01_init_database.up.sql": _01_init_databaseUpSql,
+	"02_add_directory_table.down.sql": _02_add_directory_tableDownSql,
+	"02_add_directory_table.up.sql": _02_add_directory_tableUpSql,
 }
 
 // AssetDir returns the file names below a certain
@@ -205,6 +249,8 @@ type bintree struct {
 var _bintree = &bintree{nil, map[string]*bintree{
 	"01_init_database.down.sql": &bintree{_01_init_databaseDownSql, map[string]*bintree{}},
 	"01_init_database.up.sql": &bintree{_01_init_databaseUpSql, map[string]*bintree{}},
+	"02_add_directory_table.down.sql": &bintree{_02_add_directory_tableDownSql, map[string]*bintree{}},
+	"02_add_directory_table.up.sql": &bintree{_02_add_directory_tableUpSql, map[string]*bintree{}},
 }}
 
 // RestoreAsset restores an asset under the given directory

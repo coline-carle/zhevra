@@ -28,7 +28,8 @@ func TestCreateCurseRelease(t *testing.T) {
 		return si.CreateCurseRelease(tx, release)
 	})
 	defer tearDown(si, "curse_addon", "id = $1", addon.ID)
-	defer tearDown(si, "curse_release", "id = $1", addon.ID)
+	defer tearDown(si, "curse_release", "id = $1", release.ID)
+	defer tearDown(si, "curse_release_directory", "release_id = $1", release.ID)
 	if err != nil {
 		t.Errorf("unexpected error: %s", err)
 	}

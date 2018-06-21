@@ -8,6 +8,24 @@ import (
 	"github.com/wow-sweetlie/zhevra/storage"
 )
 
+// CreateCurseReleaseDirectories create as many folder as we have
+// it does not return an error if the folder already exist
+// return a list of id for the coressponding folders
+func (s *Storage) CreateCurseReleaseDirectories(
+	tx *sql.Tx, release storage.CurseRelease) error {
+	for _, directory := range release.Directories {
+		_, err := tx.Exec(`
+				INSERT INTO curse_release_directory
+					(release_id, directory)
+				VALUES(?, ?)`,
+			release.ID, directory)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // CreateCurseRelease save new addon in the database
 func (s *Storage) CreateCurseRelease(
 	tx *sql.Tx, release storage.CurseRelease) error {
@@ -31,10 +49,30 @@ func (s *Storage) CreateCurseRelease(
 	if err != nil {
 		return errors.Wrap(err, "failed to CreateCurseRelease")
 	}
-	return nil
+	return s.CreateCurseReleaseDirectories(tx, release)
 }
 
-// GetCurseByAddonID return all release for a given addon ID
+// FindCurseReleaseDirectoriesByReleaseID return all directories for a
+// given release
+func (s *Storage) FindCurseReleaseDirectoriesByReleaseID(
+	tx *sql.Tx, id int64) ([]string, error) {
+	directories := []string{}
+	rows, err := tx.Query(`
+		SELECT
+			directory
+		FROM
+			curse_release_directory
+		WHERE
+			release_id = $1
+		`, id)
+	if err != nil {
+		return directories, errors.Wrap(err, "FindCurseReleaseDirecotries failed")
+	}
+	defer rows.Close()
+	return rowsToStringSlice(rows)
+}
+
+// FindCurseReleasesByAddonID return all release for a given addon ID
 func (s *Storage) FindCurseReleasesByAddonID(
 	tx *sql.Tx, id int64) ([]storage.CurseRelease, error) {
 	releases := []storage.CurseRelease{}
@@ -55,10 +93,24 @@ func (s *Storage) FindCurseReleasesByAddonID(
 		return releases, errors.Wrap(err, "FindCurseReleasesByAddonID")
 	}
 	defer rows.Close()
-	return rowToReleases(rows)
+	return s.rowsToReleases(tx, rows)
 }
 
-func rowToReleases(rows *sql.Rows) ([]storage.CurseRelease, error) {
+func rowsToStringSlice(rows *sql.Rows) ([]string, error) {
+	directories := []string{}
+	var directory string
+	for rows.Next() {
+		err := rows.Scan(&directory)
+		if err != nil {
+			return directories, errors.Wrap(err, "rowsToStringSlice")
+		}
+		directories = append(directories, directory)
+	}
+	return directories, nil
+}
+
+func (s *Storage) rowsToReleases(
+	tx *sql.Tx, rows *sql.Rows) ([]storage.CurseRelease, error) {
 	releases := []storage.CurseRelease{}
 	var date int64
 	for rows.Next() {
@@ -72,9 +124,10 @@ func rowToReleases(rows *sql.Rows) ([]storage.CurseRelease, error) {
 			&release.AddonID,
 		)
 		if err != nil {
-			return releases, errors.Wrap(err, "rowToReleases")
+			return releases, errors.Wrap(err, "rowsToReleases")
 		}
 		release.CreatedAt = time.Unix(date, 0).UTC()
+		release.Directories, err = s.FindCurseReleaseDirectoriesByReleaseID(tx, release.ID)
 		releases = append(releases, release)
 	}
 	return releases, nil
@@ -112,6 +165,7 @@ func (s *Storage) GetCurseRelease(
 		}
 		return release, errors.Wrap(err, "GetCurseRelease failed")
 	}
+	release.Directories, err = s.FindCurseReleaseDirectoriesByReleaseID(tx, release.ID)
 	release.CreatedAt = time.Unix(date, 0).UTC()
-	return release, nil
+	return release, err
 }
