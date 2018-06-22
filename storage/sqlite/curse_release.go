@@ -36,8 +36,9 @@ func (s *Storage) CreateCurseRelease(
 			created_at,
 			url,
 			game_version,
-			addon_id
-		) VALUES(?, ?, ?, ?, ?, ?)
+			addon_id,
+			is_alternate
+		) VALUES(?, ?, ?, ?, ?, ?, ?)
 		`,
 		release.ID,
 		release.Filename,
@@ -45,6 +46,7 @@ func (s *Storage) CreateCurseRelease(
 		release.URL,
 		release.GameVersion,
 		release.AddonID,
+		release.IsAlternate,
 	)
 	if err != nil {
 		return errors.Wrap(err, "failed to CreateCurseRelease")
@@ -83,7 +85,8 @@ func (s *Storage) FindCurseReleasesByAddonID(
 			created_at,
 			url,
 			game_version,
-			addon_id
+			addon_id,
+			is_alternate
 		FROM
 			curse_release
 		WHERE
@@ -122,6 +125,7 @@ func (s *Storage) rowsToReleases(
 			&release.URL,
 			&release.GameVersion,
 			&release.AddonID,
+			&release.IsAlternate,
 		)
 		if err != nil {
 			return releases, errors.Wrap(err, "rowsToReleases")
@@ -145,7 +149,8 @@ func (s *Storage) GetCurseRelease(
 			created_at,
 			url,
 			game_version,
-			addon_id
+			addon_id,
+			is_alternate
 		FROM
 			curse_release
 		WHERE
@@ -157,6 +162,7 @@ func (s *Storage) GetCurseRelease(
 		&release.URL,
 		&release.GameVersion,
 		&release.AddonID,
+		&release.IsAlternate,
 	)
 	if err != nil {
 		if errors.Cause(err) == sql.ErrNoRows {

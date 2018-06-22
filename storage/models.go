@@ -29,6 +29,7 @@ type CurseRelease struct {
 	URL         string
 	GameVersion string
 	AddonID     int64
+	IsAlternate bool
 	Directories []string
 }
 

@@ -33,6 +33,7 @@ type Release struct {
 	URL         string   `json:"DownloadURL"`
 	GameVersion []string `json:"GameVersion"`
 	Modules     []Module `json:"Modules"`
+	IsAlternate bool     `json:"IsAlternate"`
 }
 
 // Module repesent the different directories in addons folder
