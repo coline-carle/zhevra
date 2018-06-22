@@ -7,7 +7,8 @@ import (
 	"github.com/wow-sweetlie/zhevra/storage"
 )
 
-func (s *Storage) rowsToAddons(rows *sql.Rows) ([]storage.CurseAddon, error) {
+func (s *Storage) rowsToAddons(
+	tx *sql.Tx, rows *sql.Rows) ([]storage.CurseAddon, error) {
 	defer rows.Close()
 	addons := []storage.CurseAddon{}
 	for rows.Next() {
@@ -22,6 +23,7 @@ func (s *Storage) rowsToAddons(rows *sql.Rows) ([]storage.CurseAddon, error) {
 		if err != nil {
 			return addons, errors.Wrap(err, "rowsToAddons")
 		}
+		addon.Releases, err = s.FindCurseReleasesByAddonID(tx, addon.ID)
 		addons = append(addons, addon)
 	}
 	return addons, nil
@@ -81,7 +83,7 @@ func (s *Storage) FindAddonsWithDirectoryName(
 	if err != nil {
 		return addons, errors.Wrap(err, "FindAddonsWithDirectoryName failed")
 	}
-	return s.rowsToAddons(rows)
+	return s.rowsToAddons(tx, rows)
 }
 
 // GetCurseAddon fetch a curse addon from the databaze by ID
