@@ -23,14 +23,14 @@ type CurseFolder struct {
 
 // CurseRelease represent a release of an addon handled by curse provider
 type CurseRelease struct {
-	ID          int64
-	Filename    string
-	CreatedAt   time.Time
-	URL         string
-	GameVersion string
-	AddonID     int64
-	IsAlternate bool
-	Directories []string
+	ID           int64
+	Filename     string
+	CreatedAt    time.Time
+	URL          string
+	GameVersions []int
+	AddonID      int64
+	IsAlternate  bool
+	Directories  []string
 }
 
 var (
@@ -56,21 +56,13 @@ func (a *CurseAddon) MainReleases(minVersion string, maxVersion string) ([]Curse
 	releases := []CurseRelease{}
 	for _, release := range a.Releases {
 		if !release.IsAlternate {
-			version, err := release.NumericGameVersion()
-			if err != nil {
-				return nil, err
-			}
-			if version >= numMinVersion && version <= numMaxVersion {
-				releases = append(releases, release)
+			for _, version := range release.GameVersions {
+				if version >= numMinVersion && version <= numMaxVersion {
+					releases = append(releases, release)
+				}
 			}
 		}
 	}
 
 	return releases, nil
-}
-
-// NumericGameVersion return a numeric representation of game version for
-// comparing
-func (c *CurseRelease) NumericGameVersion() (int, error) {
-	return VersionToInt(c.GameVersion)
 }

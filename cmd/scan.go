@@ -76,9 +76,6 @@ func runScanCmd(cmd *cobra.Command, args []string) {
 				log.Fatal(err)
 			}
 			for _, release := range mainReleases {
-				if directory == "AllTheThings" {
-					fmt.Printf("%+v\n", addon)
-				}
 				if allDirectoriesExists(release.Directories, addonsDirs) {
 					for _, addonDir := range release.Directories {
 						dirMap[addonDir][addon.ID] = addon
@@ -87,8 +84,6 @@ func runScanCmd(cmd *cobra.Command, args []string) {
 			}
 		}
 	}
-
-	fmt.Printf("%+v", dirMap["AllTheThings"])
 
 	coveredDirs := make(map[string]bool)
 	validatedAddons := make(map[int64]storage.CurseAddon)
@@ -113,7 +108,6 @@ func runScanCmd(cmd *cobra.Command, args []string) {
 			}
 		}
 	}
-	fmt.Printf("\n")
 
 	for directory := range addonsDirs {
 		if _, ok := coveredDirs[directory]; !ok {

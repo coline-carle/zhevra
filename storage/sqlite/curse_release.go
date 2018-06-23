@@ -26,6 +26,24 @@ func (s *Storage) CreateCurseReleaseDirectories(
 	return nil
 }
 
+// CreateCurseReleaseGameVersions create as many folder as we have
+// it does not return an error if the folder already exist
+// return a list of id for the coressponding folders
+func (s *Storage) CreateCurseReleaseGameVersions(
+	tx *sql.Tx, release storage.CurseRelease) error {
+	for _, gameVersion := range release.GameVersions {
+		_, err := tx.Exec(`
+				INSERT INTO curse_release_game_version
+					(release_id, game_version)
+				VALUES(?, ?)`,
+			release.ID, gameVersion)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // CreateCurseRelease save new addon in the database
 func (s *Storage) CreateCurseRelease(
 	tx *sql.Tx, release storage.CurseRelease) error {
@@ -35,19 +53,21 @@ func (s *Storage) CreateCurseRelease(
 			filename,
 			created_at,
 			url,
-			game_version,
 			addon_id,
 			is_alternate
-		) VALUES(?, ?, ?, ?, ?, ?, ?)
+		) VALUES(?, ?, ?, ?, ?, ?)
 		`,
 		release.ID,
 		release.Filename,
 		release.CreatedAt.Unix(),
 		release.URL,
-		release.GameVersion,
 		release.AddonID,
 		release.IsAlternate,
 	)
+	if err != nil {
+		return errors.Wrap(err, "failed to CreateCurseRelease")
+	}
+	s.CreateCurseReleaseGameVersions(tx, release)
 	if err != nil {
 		return errors.Wrap(err, "failed to CreateCurseRelease")
 	}
@@ -74,6 +94,26 @@ func (s *Storage) FindCurseReleaseDirectoriesByReleaseID(
 	return rowsToStringSlice(rows)
 }
 
+// FindCurseReleaseGameVersionsByReleaseID return all gameversions for a
+// given release
+func (s *Storage) FindCurseReleaseGameVersionsByReleaseID(
+	tx *sql.Tx, id int64) ([]int, error) {
+	gameVersions := []int{}
+	rows, err := tx.Query(`
+		SELECT
+			game_version
+		FROM
+			curse_release_game_version
+		WHERE
+			release_id = $1
+		`, id)
+	if err != nil {
+		return gameVersions, errors.Wrap(err, "FindCurseReleaseGameVersions failed")
+	}
+	defer rows.Close()
+	return rowsToIntSlice(rows)
+}
+
 // FindCurseReleasesByAddonID return all release for a given addon ID
 func (s *Storage) FindCurseReleasesByAddonID(
 	tx *sql.Tx, id int64) ([]storage.CurseRelease, error) {
@@ -84,7 +124,6 @@ func (s *Storage) FindCurseReleasesByAddonID(
 			filename,
 			created_at,
 			url,
-			game_version,
 			addon_id,
 			is_alternate
 		FROM
@@ -97,6 +136,19 @@ func (s *Storage) FindCurseReleasesByAddonID(
 	}
 	defer rows.Close()
 	return s.rowsToReleases(tx, rows)
+}
+
+func rowsToIntSlice(rows *sql.Rows) ([]int, error) {
+	ints := []int{}
+	var intValue int
+	for rows.Next() {
+		err := rows.Scan(&intValue)
+		if err != nil {
+			return ints, errors.Wrap(err, "rowsToIntSlice")
+		}
+		ints = append(ints, intValue)
+	}
+	return ints, nil
 }
 
 func rowsToStringSlice(rows *sql.Rows) ([]string, error) {
@@ -123,7 +175,6 @@ func (s *Storage) rowsToReleases(
 			&release.Filename,
 			&date,
 			&release.URL,
-			&release.GameVersion,
 			&release.AddonID,
 			&release.IsAlternate,
 		)
@@ -131,6 +182,10 @@ func (s *Storage) rowsToReleases(
 			return releases, errors.Wrap(err, "rowsToReleases")
 		}
 		release.CreatedAt = time.Unix(date, 0).UTC()
+		release.GameVersions, err = s.FindCurseReleaseGameVersionsByReleaseID(tx, release.ID)
+		if err != nil {
+			return releases, errors.Wrap(err, "rowsToReleases")
+		}
 		release.Directories, err = s.FindCurseReleaseDirectoriesByReleaseID(tx, release.ID)
 		releases = append(releases, release)
 	}
@@ -148,7 +203,6 @@ func (s *Storage) GetCurseRelease(
 			filename,
 			created_at,
 			url,
-			game_version,
 			addon_id,
 			is_alternate
 		FROM
@@ -160,7 +214,6 @@ func (s *Storage) GetCurseRelease(
 		&release.Filename,
 		&date,
 		&release.URL,
-		&release.GameVersion,
 		&release.AddonID,
 		&release.IsAlternate,
 	)
@@ -172,6 +225,10 @@ func (s *Storage) GetCurseRelease(
 		return release, errors.Wrap(err, "GetCurseRelease failed")
 	}
 	release.Directories, err = s.FindCurseReleaseDirectoriesByReleaseID(tx, release.ID)
+	if err != nil {
+		return release, errors.Wrap(err, "GetCurseRelease failed")
+	}
+	release.GameVersions, err = s.FindCurseReleaseGameVersionsByReleaseID(tx, release.ID)
 	release.CreatedAt = time.Unix(date, 0).UTC()
 	return release, err
 }

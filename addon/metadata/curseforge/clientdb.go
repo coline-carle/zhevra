@@ -3,6 +3,7 @@ package curseforge
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"strings"
 	"time"
 
@@ -48,13 +49,23 @@ type dbDate struct {
 
 // NewCurseRelease transform curse database struct into app entity
 func NewCurseRelease(release Release) storage.CurseRelease {
+	versions := make([]int, 0, len(release.GameVersion))
+	for _, gameVersionStr := range release.GameVersion {
+		version, err := storage.VersionToInt(gameVersionStr)
+
+		// FIXME: not the better place to fail
+		if err != nil {
+			log.Fatalf("error parsing gameversion: %s", err)
+		}
+		versions = append(versions, version)
+	}
 	curseRelease := storage.CurseRelease{
-		ID:          release.ID,
-		Filename:    release.Filename,
-		CreatedAt:   release.CreatedAt.Time,
-		URL:         release.URL,
-		GameVersion: release.GameVersion[0],
-		Directories: make([]string, 0, len(release.Modules)),
+		ID:           release.ID,
+		Filename:     release.Filename,
+		CreatedAt:    release.CreatedAt.Time,
+		URL:          release.URL,
+		GameVersions: versions,
+		Directories:  make([]string, 0, len(release.Modules)),
 	}
 	for _, module := range release.Modules {
 		curseRelease.Directories = append(curseRelease.Directories, module.Foldername)
