@@ -39,3 +39,38 @@ var (
 	// ErrCurseReleaseDoesNotExists is the error returned when no release row match
 	ErrCurseReleaseDoesNotExists = errors.New("curse addon release does not exist")
 )
+
+// MainReleases return release that are not flagged as alternate by curse
+// maxVersion is the max version (avoid betas for a standard release)
+func (a *CurseAddon) MainReleases(minVersion string, maxVersion string) ([]CurseRelease, error) {
+	numMaxVersion, err := VersionToInt(maxVersion)
+	if err != nil {
+		return nil, err
+	}
+
+	numMinVersion, err := VersionToInt(minVersion)
+	if err != nil {
+		return nil, err
+	}
+
+	releases := []CurseRelease{}
+	for _, release := range a.Releases {
+		if !release.IsAlternate {
+			version, err := release.NumericGameVersion()
+			if err != nil {
+				return nil, err
+			}
+			if version >= numMinVersion && version <= numMaxVersion {
+				releases = append(releases, release)
+			}
+		}
+	}
+
+	return releases, nil
+}
+
+// NumericGameVersion return a numeric representation of game version for
+// comparing
+func (c *CurseRelease) NumericGameVersion() (int, error) {
+	return VersionToInt(c.GameVersion)
+}
