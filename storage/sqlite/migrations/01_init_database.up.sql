@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS curse_addon (
   id INTEGER PRIMARY KEY,
   name TEXT,
