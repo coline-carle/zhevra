@@ -11,6 +11,7 @@ import (
 	"unicode"
 )
 
+// Decoder struc
 type Decoder struct {
 	r *bufio.Reader
 }
@@ -26,6 +27,60 @@ func NewDecoder(r io.Reader) *Decoder {
 	return &Decoder{
 		r: bufio.NewReader(r),
 	}
+}
+
+// StripColorTags remove color tag from a string
+func StripColorTags(text string) string {
+	reader := strings.NewReader(text)
+	openedColorTags := 0
+	stripBuf := new(bytes.Buffer)
+	var err error
+	var r1 rune
+	var r2 rune
+	for {
+		r1, _, err = reader.ReadRune()
+		if err != nil {
+			goto onStripError
+		}
+
+		if r1 == '|' {
+			r2, _, err = reader.ReadRune()
+			if err != nil {
+				goto onStripError
+			}
+			switch r2 {
+			case 'c':
+				_, err := reader.Seek(8, io.SeekCurrent)
+				openedColorTags++
+				if err != nil {
+					goto onStripError
+				}
+			case 'r':
+				if openedColorTags > 0 {
+					openedColorTags--
+				} else {
+					stripBuf.WriteRune(r1)
+					stripBuf.WriteRune(r2)
+				}
+			default:
+				stripBuf.WriteRune(r1)
+				stripBuf.WriteRune(r2)
+			}
+		} else {
+			stripBuf.WriteRune(r1)
+		}
+	}
+onStripError:
+	if err == io.EOF {
+		if openedColorTags > 0 {
+			return text
+		}
+
+		return stripBuf.String()
+	}
+
+	return text
+
 }
 
 func structFields(v interface{}) map[string]reflect.Value {

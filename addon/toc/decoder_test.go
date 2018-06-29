@@ -7,6 +7,42 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var stripTests = []struct {
+	Name   string
+	Input  string
+	Output string
+}{
+	{
+		Name:   "Simple String with no tag",
+		Input:  "Simple String with no tag",
+		Output: "Simple String with no tag",
+	},
+	{
+		Name:   "String with a tag",
+		Input:  "non tagged.|cFFFFFFFFTagged|r.non tagged",
+		Output: "non tagged.Tagged.non tagged",
+	},
+	{
+		Name:   "Two tags",
+		Input:  "notag.|cFF000000tag1|cFFFFFFFFTag2|rTag1F|r.notag",
+		Output: "notag.tag1Tag2Tag1F.notag",
+	},
+	{
+		Name:   "non matching tags",
+		Input:  "non tagged.|cFFFFFFFFTagged|x.non tagged",
+		Output: "non tagged.|cFFFFFFFFTagged|x.non tagged",
+	},
+}
+
+func TestStrip(t *testing.T) {
+	for _, tt := range stripTests {
+		out := StripColorTags(tt.Input)
+		if out != tt.Output {
+			t.Errorf("%s: out=%s want %s", tt.Name, out, tt.Output)
+		}
+	}
+}
+
 var bigwigsStr = `
 ## Interface: 70300
 
