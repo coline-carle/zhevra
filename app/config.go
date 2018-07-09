@@ -1,32 +1,49 @@
-package config
+package app
 
 import (
 	"log"
 	"os"
 	"os/user"
 	"path/filepath"
+	"time"
 	"unicode"
+)
+
+// AppName is the name of the app :)
+const (
+	AppName     = "zhevra"
+	AddonDBFile = "addons.sqlite"
 )
 
 // Config struct store the base configuration of the application
 type Config struct {
-	AppName string
-	dbFile  string
+	CurseDB CurseSnapshot
+	WoWs    []WoWInfo
 }
 
-// DefaultConfig is the config that will be used by default
-var DefaultConfig = &Config{
-	AppName: "zhevra",
-	addonDB: "addons.sqlite",
+type WoWInfo struct {
+	ID     int
+	Folder string
+	Addons []AddonInfo
+}
+
+type AddonInfo struct {
+	id         int64
+	version    string
+	ReleasedAt time.Time
+}
+
+type CurseSnapshot struct {
+	CreatedAt time.Time
 }
 
 // DatabasePath the full path to the sqlite file
-func (c *Config) DatabasePath() string {
-	return filepath.Join(c.AppDataDir(), c.dbFile)
+func DatabasePath() string {
+	return filepath.Join(DataDir(), addonDBFile)
 }
 
-// AppDataDir a function that return the app directory on all supported os
-func (c *Config) AppDataDir() string {
+// DataDir a function that return the app directory on all supported os
+func DataDir() string {
 	// Get the OS specific home directory via the Go standard lib.
 	var homeDir string
 	usr, err := user.Current()
@@ -47,7 +64,7 @@ func (c *Config) AppDataDir() string {
 
 func init() {
 	// ensure the app datadir is created
-	appDataDir := DefaultConfig.AppDataDir()
+	appDataDir := DataDir()
 	if _, err := os.Stat(appDataDir); err != nil {
 		err = os.Mkdir(appDataDir, 750)
 		if err != nil {
