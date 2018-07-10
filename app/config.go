@@ -5,7 +5,6 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
-	"time"
 	"unicode"
 )
 
@@ -15,31 +14,9 @@ const (
 	AddonDBFile = "addons.sqlite"
 )
 
-// Config struct store the base configuration of the application
-type Config struct {
-	CurseDB CurseSnapshot
-	WoWs    []WoWInfo
-}
-
-type WoWInfo struct {
-	ID     int
-	Folder string
-	Addons []AddonInfo
-}
-
-type AddonInfo struct {
-	id         int64
-	version    string
-	ReleasedAt time.Time
-}
-
-type CurseSnapshot struct {
-	CreatedAt time.Time
-}
-
 // DatabasePath the full path to the sqlite file
 func DatabasePath() string {
-	return filepath.Join(DataDir(), addonDBFile)
+	return filepath.Join(DataDir(), AddonDBFile)
 }
 
 // DataDir a function that return the app directory on all supported os
@@ -57,7 +34,7 @@ func DataDir() string {
 	if err != nil || homeDir == "" {
 		homeDir = os.Getenv("HOME")
 	}
-	appNameLower := string(unicode.ToLower(rune(c.AppName[0]))) + c.AppName[1:]
+	appNameLower := string(unicode.ToLower(rune(AppName[0]))) + AppName[1:]
 
 	return filepath.Join(homeDir, "."+appNameLower)
 }

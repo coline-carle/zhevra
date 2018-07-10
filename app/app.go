@@ -7,13 +7,12 @@ import (
 
 // App is the context of the main app
 type App struct {
-	config  Config
-	storage *Storage
+	storage storage.Storage
 }
 
 // NewApp init App struct, connect to storage and migrate
-func NewApp(config *Config) (*App, err) {
-	storage, err := storage.NewStorage(config.DatabasePath)
+func NewApp() (*App, error) {
+	storage, err := storage.NewStorage(DatabasePath())
 	if err != nil {
 		return nil, errors.Wrap(err, "NewApp")
 	}
@@ -22,7 +21,6 @@ func NewApp(config *Config) (*App, err) {
 		return nil, errors.Wrap(err, "NewApp")
 	}
 	return &App{
-		config:  config,
 		storage: storage,
 	}, nil
 }

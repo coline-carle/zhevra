@@ -11,7 +11,7 @@ type Storage interface {
 	// General
 	Migrate() error
 	Tx(fn func(*sql.Tx) error) error
-	Close()
+	Close() error
 
 	// curse addons
 	CreateCurseAddon(tx *sql.Tx, addon model.CurseAddon) error
