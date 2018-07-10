@@ -6,8 +6,8 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/coline-carle/zhevra/addon/metadata/curseforge"
 	"github.com/pkg/errors"
-	"github.com/wow-sweetlie/zhevra/addon/metadata/curseforge"
 )
 
 const curseDatabaseURL = "http://clientupdate-v6.cursecdn.com/feed/addons/432/v10/complete.json.bz2"

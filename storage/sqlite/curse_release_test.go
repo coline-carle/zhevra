@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"testing"
 
+	"github.com/coline-carle/zhevra/storage/model"
 	"github.com/stretchr/testify/assert"
-	"github.com/wow-sweetlie/zhevra/storage"
 )
 
 func TestCreateCurseRelease(t *testing.T) {
@@ -33,7 +33,7 @@ func TestCreateCurseRelease(t *testing.T) {
 	if err != nil {
 		t.Errorf("unexpected error: %s", err)
 	}
-	var fetchedRelease storage.CurseRelease
+	var fetchedRelease model.CurseRelease
 
 	err = si.Tx(func(tx *sql.Tx) error {
 		fetchedRelease, err = si.GetCurseRelease(tx, release.ID)

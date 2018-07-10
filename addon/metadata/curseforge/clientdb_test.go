@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/coline-carle/zhevra/storage/model"
 	"github.com/stretchr/testify/assert"
-	"github.com/wow-sweetlie/zhevra/storage"
 )
 
 func TestIntegrationDecode(t *testing.T) {
@@ -84,7 +84,7 @@ func TestDecode(t *testing.T) {
 
 	// now test convertion into our models
 
-	curseRelease := storage.CurseRelease{
+	curseRelease := model.CurseRelease{
 		ID:          2482102,
 		Filename:    "7.3.1",
 		CreatedAt:   date,
@@ -92,13 +92,13 @@ func TestDecode(t *testing.T) {
 		GameVersion: "7.3.0",
 		Directories: []string{"Gatherer", "SlideBar", "!Swatter", "Gatherer_HUD"},
 	}
-	expectedAddon := storage.CurseAddon{
+	expectedAddon := model.CurseAddon{
 		ID:            32,
 		Name:          "Gatherer",
 		URL:           "https://www.curseforge.com/wow/addons/gatherer",
 		Summary:       "Helps track the closest plants, deposits and treasure locations on your minimap.",
 		DownloadCount: 15465595,
-		Releases:      []storage.CurseRelease{curseRelease},
+		Releases:      []model.CurseRelease{curseRelease},
 	}
 
 	curseAddon := NewCurseAddon(gatherer)

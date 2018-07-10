@@ -1,8 +1,8 @@
 package app
 
 import (
+	"github.com/coline-carle/zhevra/storage"
 	"github.com/pkg/errors"
-	"github.com/wow-sweetlie/zhevra/storage"
 )
 
 // App is the context of the main app

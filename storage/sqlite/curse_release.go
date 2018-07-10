@@ -4,15 +4,15 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/coline-carle/zhevra/storage/model"
 	"github.com/pkg/errors"
-	"github.com/wow-sweetlie/zhevra/storage"
 )
 
 // CreateCurseReleaseDirectories create as many folder as we have
 // it does not return an error if the folder already exist
 // return a list of id for the coressponding folders
 func (s *Storage) CreateCurseReleaseDirectories(
-	tx *sql.Tx, release storage.CurseRelease) error {
+	tx *sql.Tx, release model.CurseRelease) error {
 	for _, directory := range release.Directories {
 		_, err := tx.Exec(`
 				INSERT INTO curse_release_directory
@@ -30,7 +30,7 @@ func (s *Storage) CreateCurseReleaseDirectories(
 // it does not return an error if the folder already exist
 // return a list of id for the coressponding folders
 func (s *Storage) CreateCurseReleaseGameVersions(
-	tx *sql.Tx, release storage.CurseRelease) error {
+	tx *sql.Tx, release model.CurseRelease) error {
 	for _, gameVersion := range release.GameVersions {
 		_, err := tx.Exec(`
 				INSERT INTO curse_release_game_version
@@ -46,7 +46,7 @@ func (s *Storage) CreateCurseReleaseGameVersions(
 
 // CreateCurseRelease save new addon in the database
 func (s *Storage) CreateCurseRelease(
-	tx *sql.Tx, release storage.CurseRelease) error {
+	tx *sql.Tx, release model.CurseRelease) error {
 	_, err := tx.Exec(
 		`INSERT INTO curse_release (
 			id,
@@ -116,8 +116,8 @@ func (s *Storage) FindCurseReleaseGameVersionsByReleaseID(
 
 // FindCurseReleasesByAddonID return all release for a given addon ID
 func (s *Storage) FindCurseReleasesByAddonID(
-	tx *sql.Tx, id int64) ([]storage.CurseRelease, error) {
-	releases := []storage.CurseRelease{}
+	tx *sql.Tx, id int64) ([]model.CurseRelease, error) {
+	releases := []model.CurseRelease{}
 	rows, err := tx.Query(`
 		SELECT
 			id,
@@ -165,11 +165,11 @@ func rowsToStringSlice(rows *sql.Rows) ([]string, error) {
 }
 
 func (s *Storage) rowsToReleases(
-	tx *sql.Tx, rows *sql.Rows) ([]storage.CurseRelease, error) {
-	releases := []storage.CurseRelease{}
+	tx *sql.Tx, rows *sql.Rows) ([]model.CurseRelease, error) {
+	releases := []model.CurseRelease{}
 	var date int64
 	for rows.Next() {
-		release := storage.CurseRelease{}
+		release := model.CurseRelease{}
 		err := rows.Scan(
 			&release.ID,
 			&release.Filename,
@@ -194,8 +194,8 @@ func (s *Storage) rowsToReleases(
 
 // GetCurseRelease fetch and addon by ID
 func (s *Storage) GetCurseRelease(
-	tx *sql.Tx, id int64) (storage.CurseRelease, error) {
-	release := storage.CurseRelease{}
+	tx *sql.Tx, id int64) (model.CurseRelease, error) {
+	release := model.CurseRelease{}
 	var date int64
 	err := tx.QueryRow(`
 		SELECT
@@ -219,7 +219,6 @@ func (s *Storage) GetCurseRelease(
 	)
 	if err != nil {
 		if errors.Cause(err) == sql.ErrNoRows {
-			err = storage.ErrCurseReleaseDoesNotExists
 			return release, errors.Wrapf(err, "id %d", id)
 		}
 		return release, errors.Wrap(err, "GetCurseRelease failed")

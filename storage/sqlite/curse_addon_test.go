@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"testing"
 
+	"github.com/coline-carle/zhevra/storage/model"
 	"github.com/stretchr/testify/assert"
-	"github.com/wow-sweetlie/zhevra/storage"
 )
 
 func TestFindByDirectory(t *testing.T) {
@@ -32,7 +32,7 @@ func TestFindByDirectory(t *testing.T) {
 	if err != nil {
 		t.Errorf("unexpected error: %s", err)
 	}
-	var addons []storage.CurseAddon
+	var addons []model.CurseAddon
 	err = si.Tx(func(tx *sql.Tx) error {
 		addons, err = si.FindAddonsWithDirectoryName(tx, "directory-1-1")
 		return err
@@ -69,7 +69,7 @@ func TestCreateAddon(t *testing.T) {
 	if err != nil {
 		t.Errorf("unexpected error: %s", err)
 	}
-	var fetchedAddon storage.CurseAddon
+	var fetchedAddon model.CurseAddon
 
 	err = si.Tx(func(tx *sql.Tx) error {
 		fetchedAddon, err = si.GetCurseAddon(tx, addon.ID)

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/wow-sweetlie/zhevra/storage"
+	"github.com/coline-carle/zhevra/storage/model"
 )
 
 func tearDown(s *Storage, table string, where string, params ...interface{}) {
@@ -16,8 +16,8 @@ func tearDown(s *Storage, table string, where string, params ...interface{}) {
 	}
 }
 
-func testUtilCreateRelease(ID int64, addonID int64) storage.CurseRelease {
-	return storage.CurseRelease{
+func testUtilCreateRelease(ID int64, addonID int64) model.CurseRelease {
+	return model.CurseRelease{
 		ID:           ID,
 		Filename:     fmt.Sprintf("Filename-%d.zip", ID),
 		CreatedAt:    time.Date(2018, 9, 9, 0, 0, 0, 0, time.UTC),
@@ -31,13 +31,13 @@ func testUtilCreateRelease(ID int64, addonID int64) storage.CurseRelease {
 	}
 }
 
-func testUtilCreateAddon(ID int64) storage.CurseAddon {
-	return storage.CurseAddon{
+func testUtilCreateAddon(ID int64) model.CurseAddon {
+	return model.CurseAddon{
 		ID:            ID,
 		Name:          fmt.Sprintf("Name-%d", ID),
 		Summary:       fmt.Sprintf("Summary-%d", ID),
 		URL:           fmt.Sprintf("https://url/addon-%d", ID),
 		DownloadCount: 33 * ID,
-		Releases:      []storage.CurseRelease{},
+		Releases:      []model.CurseRelease{},
 	}
 }

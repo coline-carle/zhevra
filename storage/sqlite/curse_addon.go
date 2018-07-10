@@ -3,16 +3,16 @@ package sqlite
 import (
 	"database/sql"
 
+	"github.com/coline-carle/zhevra/storage/model"
 	"github.com/pkg/errors"
-	"github.com/wow-sweetlie/zhevra/storage"
 )
 
 func (s *Storage) rowsToAddons(
-	tx *sql.Tx, rows *sql.Rows) ([]storage.CurseAddon, error) {
+	tx *sql.Tx, rows *sql.Rows) ([]model.CurseAddon, error) {
 	defer rows.Close()
-	addons := []storage.CurseAddon{}
+	addons := []model.CurseAddon{}
 	for rows.Next() {
-		addon := storage.CurseAddon{}
+		addon := model.CurseAddon{}
 		err := rows.Scan(
 			&addon.ID,
 			&addon.Name,
@@ -31,7 +31,7 @@ func (s *Storage) rowsToAddons(
 
 // CreateCurseAddon add a new addon from curse to the database
 func (s *Storage) CreateCurseAddon(
-	tx *sql.Tx, addon storage.CurseAddon) error {
+	tx *sql.Tx, addon model.CurseAddon) error {
 	_, err := tx.Exec(
 		`INSERT INTO curse_addon (
 			id,
@@ -63,8 +63,8 @@ func (s *Storage) CreateCurseAddon(
 
 // FindAddonsWithDirectoryName find all addon for a given directory name
 func (s *Storage) FindAddonsWithDirectoryName(
-	tx *sql.Tx, directory string) ([]storage.CurseAddon, error) {
-	addons := []storage.CurseAddon{}
+	tx *sql.Tx, directory string) ([]model.CurseAddon, error) {
+	addons := []model.CurseAddon{}
 	rows, err := tx.Query(`
 		SELECT
 			DISTINCT(curse_addon.id),
@@ -89,8 +89,8 @@ func (s *Storage) FindAddonsWithDirectoryName(
 // GetCurseAddon fetch a curse addon from the databaze by ID
 // id curse id of the addon
 func (s *Storage) GetCurseAddon(
-	tx *sql.Tx, id int64) (storage.CurseAddon, error) {
-	addon := storage.CurseAddon{}
+	tx *sql.Tx, id int64) (model.CurseAddon, error) {
+	addon := model.CurseAddon{}
 	err := tx.QueryRow(`
 		SELECT
 			id,
@@ -111,7 +111,7 @@ func (s *Storage) GetCurseAddon(
 	)
 	if err != nil {
 		if errors.Cause(err) == sql.ErrNoRows {
-			err = storage.ErrCurseAddonDoesNotExists
+			err = model.ErrCurseAddonDoesNotExists
 			return addon, errors.Wrapf(err, "id %d", id)
 		}
 		return addon, errors.Wrap(err, "GetCurseAddon failed")

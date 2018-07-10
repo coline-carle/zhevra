@@ -3,10 +3,10 @@ package sqlite
 import (
 	"database/sql"
 
+	"github.com/coline-carle/zhevra/storage/sqlite/migrations"
 	"github.com/golang-migrate/migrate"
 	bindata "github.com/golang-migrate/migrate/source/go_bindata"
 	"github.com/pkg/errors"
-	"github.com/wow-sweetlie/zhevra/storage/sqlite/migrations"
 
 	// sqlite3 driver for migrations
 	"github.com/golang-migrate/migrate/database/sqlite3"

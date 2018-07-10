@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/wow-sweetlie/zhevra/storage"
+	"github.com/coline-carle/zhevra/storage/model"
 )
 
 // ClientDB database root
@@ -48,18 +48,18 @@ type dbDate struct {
 }
 
 // NewCurseRelease transform curse database struct into app entity
-func NewCurseRelease(release Release) storage.CurseRelease {
+func NewCurseRelease(release Release) model.CurseRelease {
 	versions := make([]int, 0, len(release.GameVersion))
 	for _, gameVersionStr := range release.GameVersion {
-		version, err := storage.VersionToInt(gameVersionStr)
+		version, err := model.VersionToInt(gameVersionStr)
 
 		// FIXME: not the better place to fail
 		if err != nil {
-			log.Fatalf("error parsing gameversion: %s", err)
+			log.Fatalf("error parsing gameversion (%s): %s", gameVersionStr, err)
 		}
 		versions = append(versions, version)
 	}
-	curseRelease := storage.CurseRelease{
+	curseRelease := model.CurseRelease{
 		ID:           release.ID,
 		Filename:     release.Filename,
 		CreatedAt:    release.CreatedAt.Time,
@@ -74,14 +74,14 @@ func NewCurseRelease(release Release) storage.CurseRelease {
 }
 
 // NewCurseAddon transform curse database struct into app entity
-func NewCurseAddon(addon Addon) storage.CurseAddon {
-	curseAddon := storage.CurseAddon{
+func NewCurseAddon(addon Addon) model.CurseAddon {
+	curseAddon := model.CurseAddon{
 		ID:            addon.ID,
 		Name:          addon.Name,
 		URL:           addon.URL,
 		Summary:       addon.Summary,
 		DownloadCount: int64(addon.DownloadCount),
-		Releases:      []storage.CurseRelease{},
+		Releases:      []model.CurseRelease{},
 	}
 
 	for _, release := range addon.Releases {

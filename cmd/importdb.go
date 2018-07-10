@@ -1,16 +1,20 @@
 package cmd
 
 import (
+	"compress/bzip2"
 	"database/sql"
 	"log"
+	"net/http"
 	"os"
 
+	"github.com/coline-carle/zhevra/addon/metadata/curseforge"
+	"github.com/coline-carle/zhevra/storage/sqlite"
 	"github.com/spf13/cobra"
-	"github.com/wow-sweetlie/zhevra/addon/metadata/curseforge"
-	"github.com/wow-sweetlie/zhevra/storage/sqlite"
 )
 
-var cursedb string
+const url = "http://clientupdate-v6.cursecdn.com/feed/addons/1/v10/complete.json.bz2"
+
+var filename string
 
 var importdbCmd = &cobra.Command{
 	Use:   "importdb",
@@ -20,16 +24,30 @@ var importdbCmd = &cobra.Command{
 
 func setImportdbCmdFlags() {
 	importdbCmd.Flags().StringVarP(
-		&cursedb, "cursedb", "c", "", "cursedb file (required)")
-	importdbCmd.MarkFlagRequired("cursedb")
+		&filename, "filename", "f", "", "import cursedb filename")
+	importdbCmd.PersistentFlags().Bool("online", true, "fetch the database from internet")
 }
 
 func runImportdbCmd(cmd *cobra.Command, args []string) {
-	curseDBFile, err := os.Open(cursedb)
-	if err != nil {
-		log.Fatalf("error loading cursedb: %s", err)
+	var curseDB *curseforge.ClientDB
+	var err error
+	if len(filename) > 0 {
+		curseDBFile, err := os.Open(filename)
+		defer curseDBFile.Close()
+		if err != nil {
+			log.Fatalf("error loading cursedb: %s", err)
+		}
+		curseDB, err = curseforge.DecodeDB(curseDBFile)
+	} else {
+		resp, err := http.Get(url)
+		if err != nil {
+			log.Fatalf("error downloading cursedb: %s", err)
+		}
+		defer resp.Body.Close()
+		reader := bzip2.NewReader(resp.Body)
+		curseDB, err = curseforge.DecodeDB(reader)
 	}
-	jsonDB, err := curseforge.DecodeDB(curseDBFile)
+
 	if err != nil {
 		log.Fatalf("unexpected error decoding the database: %s", err)
 	}
@@ -45,7 +63,7 @@ func runImportdbCmd(cmd *cobra.Command, args []string) {
 	defer programDB.Close()
 
 	err = programDB.Tx(func(tg *sql.Tx) error {
-		for _, addon := range jsonDB.Addons {
+		for _, addon := range curseDB.Addons {
 			curseAddon := curseforge.NewCurseAddon(addon)
 			err = programDB.Tx(func(tx *sql.Tx) error {
 				return programDB.CreateCurseAddon(tx, curseAddon)

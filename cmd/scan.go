@@ -9,9 +9,9 @@ import (
 	"os"
 	"path"
 
+	"github.com/coline-carle/zhevra/storage/model"
+	"github.com/coline-carle/zhevra/storage/sqlite"
 	"github.com/spf13/cobra"
-	"github.com/wow-sweetlie/zhevra/storage"
-	"github.com/wow-sweetlie/zhevra/storage/sqlite"
 )
 
 var (
@@ -43,8 +43,8 @@ func runScanCmd(cmd *cobra.Command, args []string) {
 		log.Fatal(err)
 	}
 
-	var dirMap map[string](map[int64]storage.CurseAddon)
-	dirMap = make(map[string](map[int64]storage.CurseAddon))
+	var dirMap map[string](map[int64]model.CurseAddon)
+	dirMap = make(map[string](map[int64]model.CurseAddon))
 
 	addonsDirs := make(map[string]bool)
 
@@ -55,13 +55,13 @@ func runScanCmd(cmd *cobra.Command, args []string) {
 			if _, err := os.Stat(tocPath); os.IsNotExist(err) {
 				continue
 			}
-			dirMap[f.Name()] = make(map[int64]storage.CurseAddon)
+			dirMap[f.Name()] = make(map[int64]model.CurseAddon)
 			addonsDirs[f.Name()] = true
 		}
 	}
 
 	for directory := range addonsDirs {
-		var matchingAddons []storage.CurseAddon
+		var matchingAddons []model.CurseAddon
 		err := addondb.Tx(func(tx *sql.Tx) error {
 			matchingAddons, err = addondb.FindAddonsWithDirectoryName(tx, directory)
 			return err
@@ -86,11 +86,11 @@ func runScanCmd(cmd *cobra.Command, args []string) {
 	}
 
 	coveredDirs := make(map[string]bool)
-	validatedAddons := make(map[int64]storage.CurseAddon)
+	validatedAddons := make(map[int64]model.CurseAddon)
 
 	for dir, addons := range dirMap {
 		if _, covered := coveredDirs[dir]; !covered && len(addons) == 1 {
-			var addon storage.CurseAddon
+			var addon model.CurseAddon
 			for _, addon = range addons {
 			}
 			mainReleases, err := addon.MainReleases(minVersion, maxVersion)
