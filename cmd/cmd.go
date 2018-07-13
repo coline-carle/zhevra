@@ -7,7 +7,6 @@ import (
 )
 
 func init() {
-	setImportdbCmdFlags()
 	setScanCmdFlags()
 	rootCmd.AddCommand(importdbCmd)
 	rootCmd.AddCommand(scanCmd)

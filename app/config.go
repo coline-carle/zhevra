@@ -1,22 +1,64 @@
 package app
 
 import (
+	"encoding/json"
 	"log"
 	"os"
 	"os/user"
 	"path/filepath"
 	"unicode"
+
+	"github.com/coline-carle/zhevra/storage"
+	"github.com/pkg/errors"
 )
 
 // AppName is the name of the app :)
 const (
 	AppName     = "zhevra"
+	StateFile   = "state.json"
 	AddonDBFile = "addons.sqlite"
 )
 
-// DatabasePath the full path to the sqlite file
-func DatabasePath() string {
-	return filepath.Join(DataDir(), AddonDBFile)
+// LoadDatabase open sqlite database and migrate it
+func LoadDatabase() (storage.Storage, error) {
+	path := filepath.Join(DataDir(), AddonDBFile)
+	storage, err := storage.NewStorage(path)
+	if err != nil {
+		return nil, errors.Wrap(err, "NewApp")
+	}
+	err = storage.Migrate()
+	if err != nil {
+		return nil, errors.Wrap(err, "NewApp")
+	}
+	return storage, nil
+}
+
+// WriteState Save the state to the disk
+func (app *App) WriteState() error {
+	statePath := filepath.Join(DataDir(), StateFile)
+	stateFile, err := os.Create(statePath)
+	if err != nil {
+		return err
+	}
+	defer stateFile.Close()
+	return json.NewEncoder(stateFile).Encode(app)
+}
+
+// LoadState load the state of the application from the json file
+func LoadState() (*App, error) {
+	statePath := filepath.Join(DataDir(), StateFile)
+
+	if _, err := os.Stat(statePath); os.IsNotExist(err) {
+		return &App{}, nil
+	}
+	stateFile, err := os.Open(statePath)
+	if err != nil {
+		return nil, err
+	}
+	defer stateFile.Close()
+	app := &App{}
+	err = json.NewDecoder(stateFile).Decode(app)
+	return app, err
 }
 
 // DataDir a function that return the app directory on all supported os
