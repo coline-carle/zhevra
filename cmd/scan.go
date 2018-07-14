@@ -1,5 +1,6 @@
 package cmd
 
+/*
 import (
 	"database/sql"
 	"errors"
@@ -124,3 +125,4 @@ func allDirectoriesExists(directories []string, allDirectories map[string]bool) 
 	}
 	return true
 }
+*/
