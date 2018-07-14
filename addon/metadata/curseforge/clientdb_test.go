@@ -85,12 +85,12 @@ func TestDecode(t *testing.T) {
 	// now test convertion into our models
 
 	curseRelease := model.CurseRelease{
-		ID:          2482102,
-		Filename:    "7.3.1",
-		CreatedAt:   date,
-		URL:         "https://files.forgecdn.net/files/2482/102/Gatherer-7.3.1.zip",
-		GameVersion: "7.3.0",
-		Directories: []string{"Gatherer", "SlideBar", "!Swatter", "Gatherer_HUD"},
+		ID:           2482102,
+		Filename:     "7.3.1",
+		CreatedAt:    date,
+		URL:          "https://files.forgecdn.net/files/2482/102/Gatherer-7.3.1.zip",
+		GameVersions: []int{70300},
+		Directories:  []string{"Gatherer", "SlideBar", "!Swatter", "Gatherer_HUD"},
 	}
 	expectedAddon := model.CurseAddon{
 		ID:            32,

@@ -7,6 +7,7 @@ import (
 
 	"github.com/coline-carle/zhevra/addondir"
 	"github.com/coline-carle/zhevra/storage"
+	"github.com/coline-carle/zhevra/storage/model"
 )
 
 // App is the context of the main app
@@ -16,6 +17,11 @@ type App struct {
 	wowDir         string
 	wowVersion     string
 	directories    map[string]addondir.Hashmap
+}
+
+// WowIntVersion return wow version as an int
+func (app *App) WowIntVersion() (int, error) {
+	return model.VersionToInt(app.wowVersion)
 }
 
 // Close the databaase save the state

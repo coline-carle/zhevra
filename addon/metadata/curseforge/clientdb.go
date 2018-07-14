@@ -49,7 +49,7 @@ type dbDate struct {
 
 // NewCurseRelease transform curse database struct into app entity
 func NewCurseRelease(release Release) model.CurseRelease {
-	versions := make([]int, 0, len(release.GameVersion))
+	versionSet := make(map[int]struct{})
 	for _, gameVersionStr := range release.GameVersion {
 		version, err := model.VersionToInt(gameVersionStr)
 
@@ -57,6 +57,10 @@ func NewCurseRelease(release Release) model.CurseRelease {
 		if err != nil {
 			log.Fatalf("error parsing gameversion (%s): %s", gameVersionStr, err)
 		}
+		versionSet[version] = struct{}{}
+	}
+	versions := make([]int, 0, len(versionSet))
+	for version := range versionSet {
 		versions = append(versions, version)
 	}
 	curseRelease := model.CurseRelease{

@@ -32,12 +32,16 @@ func (a *App) DownloadDatabase() (*curseforge.ClientDB, error) {
 // curseDB reader of curse json database
 func (a *App) ImportCurseDB(curseDB *curseforge.ClientDB) error {
 	var err error
-	err = a.storage.Tx(func(tg *sql.Tx) error {
+	err = a.storage.Tx(func(tx *sql.Tx) error {
+		err2 := a.storage.DeleteAllAddons(tx)
+		if err2 != nil {
+			return err2
+		}
 		for _, addon := range curseDB.Addons {
 			curseAddon := curseforge.NewCurseAddon(addon)
-			err = a.storage.CreateCurseAddon(tg, curseAddon)
-			if err != nil {
-				return err
+			err2 = a.storage.CreateCurseAddon(tx, curseAddon)
+			if err2 != nil {
+				return err2
 			}
 		}
 		return nil

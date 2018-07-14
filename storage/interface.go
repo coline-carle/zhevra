@@ -15,6 +15,7 @@ type Storage interface {
 
 	// curse addons
 	CreateCurseAddon(tx *sql.Tx, addon model.CurseAddon) error
+	DeleteAllAddons(tx *sql.Tx) error
 	FindAddonsWithDirectoryName(
 		tx *sql.Tx,
 		directory string) (
