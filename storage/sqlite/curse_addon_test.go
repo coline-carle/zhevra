@@ -9,7 +9,7 @@ import (
 )
 
 func TestFindByDirectory(t *testing.T) {
-	si, err := NewStorage("test.sqlite")
+	si, err := NewStorage(":memory:")
 	if err != nil {
 		t.Errorf("An error '%s' was not expected when opening a database connection", err)
 	}
@@ -21,11 +21,7 @@ func TestFindByDirectory(t *testing.T) {
 	addon := testUtilCreateAddon(1)
 	addon.Releases = append(addon.Releases, testUtilCreateRelease(1, addon.ID))
 	addon.Releases = append(addon.Releases, testUtilCreateRelease(2, addon.ID))
-	defer tearDown(si, "curse_addon", "id = $1", addon.ID)
-	defer tearDown(si, "curse_release", "id = $1", 1)
-	defer tearDown(si, "curse_release", "id = $1", 2)
-	defer tearDown(si, "curse_release_directory", "release_id = $1", 1)
-	defer tearDown(si, "curse_release_directory", "release_id = $1", 2)
+
 	err = si.Tx(func(tx *sql.Tx) error {
 		return si.CreateCurseAddon(tx, addon)
 	})
@@ -45,8 +41,8 @@ func TestFindByDirectory(t *testing.T) {
 	}
 }
 
-func TestCreateAddon(t *testing.T) {
-	si, err := NewStorage("test.sqlite")
+func TestDeleteAllAddons(t *testing.T) {
+	si, err := NewStorage(":memory:")
 	if err != nil {
 		t.Errorf("An error '%s' was not expected when opening a database connection", err)
 	}
@@ -58,11 +54,48 @@ func TestCreateAddon(t *testing.T) {
 	addon := testUtilCreateAddon(1)
 	addon.Releases = append(addon.Releases, testUtilCreateRelease(1, addon.ID))
 	addon.Releases = append(addon.Releases, testUtilCreateRelease(2, addon.ID))
-	defer tearDown(si, "curse_addon", "id = $1", addon.ID)
-	defer tearDown(si, "curse_release", "id = $1", 1)
-	defer tearDown(si, "curse_release", "id = $1", 2)
-	defer tearDown(si, "curse_release_directory", "release_id = $1", 1)
-	defer tearDown(si, "curse_release_directory", "release_id = $1", 2)
+
+	err = si.Tx(func(tx *sql.Tx) error {
+		return si.CreateCurseAddon(tx, addon)
+	})
+
+	if err != nil {
+		t.Errorf("unexpected error: %s\n", err)
+	}
+
+	err = si.Tx(func(tx *sql.Tx) error {
+		return si.DeleteAllAddons(tx)
+	})
+
+	if err != nil {
+		t.Errorf("unexpected error: %s\n", err)
+	}
+
+	if !isTableEmpty(si, "curse_addon") {
+		t.Errorf("Expected curse_addon to be empty\n")
+	}
+	if !isTableEmpty(si, "curse_release") {
+		t.Errorf("Expected curse_release to be empty\n")
+	}
+
+	if !isTableEmpty(si, "curse_release_directory") {
+		t.Errorf("Expected curse_release_directory to be empty\n")
+	}
+}
+
+func TestCreateAddon(t *testing.T) {
+	si, err := NewStorage(":memory:")
+	if err != nil {
+		t.Errorf("An error '%s' was not expected when opening a database connection", err)
+	}
+	defer si.Close()
+	err = si.Migrate()
+	if err != nil {
+		t.Errorf("An error '%s' was not while migrating", err)
+	}
+	addon := testUtilCreateAddon(1)
+	addon.Releases = append(addon.Releases, testUtilCreateRelease(1, addon.ID))
+	addon.Releases = append(addon.Releases, testUtilCreateRelease(2, addon.ID))
 	err = si.Tx(func(tx *sql.Tx) error {
 		return si.CreateCurseAddon(tx, addon)
 	})
@@ -76,7 +109,6 @@ func TestCreateAddon(t *testing.T) {
 		return err
 	})
 	if err != nil {
-
 		t.Errorf("unexpected error: %s", err)
 	}
 	assert.Equal(t, addon, fetchedAddon)

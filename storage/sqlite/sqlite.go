@@ -2,6 +2,7 @@ package sqlite
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/coline-carle/zhevra/storage/sqlite/migrations"
 	"github.com/golang-migrate/migrate"
@@ -22,7 +23,8 @@ type Storage struct {
 // NewStorage create a new storage using sqlite3 database
 // filename name of the sqlite3 database file
 func NewStorage(filename string) (*Storage, error) {
-	db, err := sql.Open("sqlite3", filename)
+	fullQualifedName := fmt.Sprintf("%s?_foreign_keys=1", filename)
+	db, err := sql.Open("sqlite3", fullQualifedName)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to open db")
 	}
@@ -66,6 +68,11 @@ func (s *Storage) Tx(fn func(*sql.Tx) error) error {
 	if err != nil {
 		return errors.Wrap(err, "begin transaction")
 	}
+
+	// _, err = tx.Exec("PRAGMA defer_foreign_keys=ON")
+	// if err != nil {
+	// 	return err
+	// }
 
 	err = fn(tx)
 	if err != nil {

@@ -29,6 +29,15 @@ func (s *Storage) rowsToAddons(
 	return addons, nil
 }
 
+// DeleteAllAddons delete all addons from the database
+func (s *Storage) DeleteAllAddons(tx *sql.Tx) error {
+	_, err := tx.Exec(`DELETE FROM curse_addon`)
+	if err != nil {
+		return errors.Wrap(err, "failed to DeleteAllAddons")
+	}
+	return nil
+}
+
 // CreateCurseAddon add a new addon from curse to the database
 func (s *Storage) CreateCurseAddon(
 	tx *sql.Tx, addon model.CurseAddon) error {

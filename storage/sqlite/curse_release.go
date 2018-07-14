@@ -65,13 +65,17 @@ func (s *Storage) CreateCurseRelease(
 		release.IsAlternate,
 	)
 	if err != nil {
-		return errors.Wrap(err, "failed to CreateCurseRelease")
+		return errors.Wrap(err, "INSERT curse_release failed")
 	}
-	s.CreateCurseReleaseGameVersions(tx, release)
+	err = s.CreateCurseReleaseGameVersions(tx, release)
 	if err != nil {
-		return errors.Wrap(err, "failed to CreateCurseRelease")
+		return errors.Wrap(err, "failed to CreateCurseRelease (GameVersion)")
 	}
-	return s.CreateCurseReleaseDirectories(tx, release)
+	err = s.CreateCurseReleaseDirectories(tx, release)
+	if err != nil {
+		return errors.Wrap(err, "failed to CreateCurseRelease (Directories)")
+	}
+	return nil
 }
 
 // FindCurseReleaseDirectoriesByReleaseID return all directories for a

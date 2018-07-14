@@ -7,13 +7,13 @@ import (
 	"github.com/coline-carle/zhevra/storage/model"
 )
 
-func tearDown(s *Storage, table string, where string, params ...interface{}) {
-	_, err := s.DB.Exec(
-		fmt.Sprintf("DELETE FROM \"%s\" WHERE %s", table, where),
-		params...)
+func isTableEmpty(s *Storage, table string) bool {
+	var count int
+	err := s.DB.QueryRow(fmt.Sprintf("SELECT COUNT(*) FROM %s", table)).Scan(&count)
 	if err != nil {
-		panic(fmt.Sprintf("Problem tearing down %s data: %v", table, err))
+		panic(fmt.Sprintf("unexpected error: %s\n", err))
 	}
+	return count == 0
 }
 
 func testUtilCreateRelease(ID int64, addonID int64) model.CurseRelease {

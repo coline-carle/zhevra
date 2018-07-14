@@ -8,12 +8,13 @@ CREATE TABLE IF NOT EXISTS curse_addon (
 
 
 CREATE TABLE IF NOT EXISTS curse_release (
-  id INTEGER NOT NULL,
+  id INTEGER PRIMARY KEY,
   filename TEXT NOT NULL,
   created_at INTEGER NOT NULL,
   url TEXT NOT NULL,
   addon_id INTEGER NOT NULL,
   is_alternate INTEGER NOT NULL,
-  PRIMARY KEY (id, addon_id),
-  FOREIGN KEY(addon_id) REFERENCES curse_addon(id)
+  FOREIGN KEY(addon_id) REFERENCES curse_addon(id) ON DELETE CASCADE
 );
+
+CREATE INDEX curse_addon_index ON curse_release(addon_id);
