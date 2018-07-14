@@ -6,8 +6,8 @@ var versionToIntTests = []struct {
 	version  string
 	expected int
 }{
-	{"7.3.15", 7*0x100*0x100 + 3*0x100 + 15},
-	{"6.0.0", 6 * 0x100 * 0x100},
+	{"7.3.15", 70315},
+	{"6.0.0", 60000},
 }
 
 func TestVersionToInt(t *testing.T) {
