@@ -3,7 +3,6 @@ package addondir
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 
@@ -21,13 +20,10 @@ func AddonDirectories(wowDir string) (map[string]Hashmap, error) {
 	if err != nil {
 		return nil, ErrAddonsDirectoryNotFound
 	}
-	log.Println(len(files))
 
 	directories := make(map[string]Hashmap)
 
 	for _, f := range files {
-
-		log.Println(f.Name())
 		if f.IsDir() {
 			if IsAddonDir(addonsBaseDir, f.Name()) {
 				directories[f.Name()], err = MD5All(filepath.Join(addonsBaseDir, f.Name()))
@@ -46,8 +42,6 @@ func AddonDirectories(wowDir string) (map[string]Hashmap, error) {
 func IsAddonDir(addonsDir string, dir string) bool {
 	tocFilename := fmt.Sprintf("%s.toc", dir)
 	tocPath := filepath.Join(addonsDir, dir, tocFilename)
-	log.Println(tocPath)
 	_, err := os.Stat(tocPath)
-	log.Println(err)
 	return !os.IsNotExist(err)
 }

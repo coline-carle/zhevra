@@ -10,6 +10,11 @@ var (
 	versionRegexp = regexp.MustCompile(`(\d{1,2})\.(\d{1,2}).(\d{1,2})`)
 )
 
+const (
+	majorFactor = 100 * 100
+	minorFactor = 100
+)
+
 // VersionToInt convert a version in he format x.x.x to a number
 func VersionToInt(version string) (int, error) {
 	matches := versionRegexp.FindStringSubmatch(version)
@@ -28,5 +33,10 @@ func VersionToInt(version string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	return major*0x100*0x100 + minor*0x100 + patch, nil
+	return major*majorFactor + minor*minorFactor + patch, nil
+}
+
+// PreviousMajorVersion Return the first verion of the previous expension
+func PreviousMajorVersion(version int) int {
+	return (version/majorFactor - 1) * majorFactor
 }

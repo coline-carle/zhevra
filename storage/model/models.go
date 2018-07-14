@@ -41,17 +41,14 @@ var (
 )
 
 // MainReleases return release that are not flagged as alternate by curse
-// maxVersion is the max version (avoid betas for a standard release)
-func (a *CurseAddon) MainReleases(minVersion string, maxVersion string) ([]CurseRelease, error) {
-	numMaxVersion, err := VersionToInt(maxVersion)
+// curVersion is the live version of the game (avoid betas for a standard release)
+func (a *CurseAddon) MainReleases(curVersion string) ([]CurseRelease, error) {
+	numMaxVersion, err := VersionToInt(curVersion)
 	if err != nil {
 		return nil, err
 	}
 
-	numMinVersion, err := VersionToInt(minVersion)
-	if err != nil {
-		return nil, err
-	}
+	numMinVersion := PreviousMajorVersion(numMaxVersion)
 
 	releases := []CurseRelease{}
 	for _, release := range a.Releases {

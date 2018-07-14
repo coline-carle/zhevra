@@ -11,9 +11,10 @@ import (
 
 // App is the context of the main app
 type App struct {
-	StorageLastMod *time.Time `json:"storage_lastmod,omitempty"`
+	StorageLastMod time.Time `json:"storage_lastmod,omitempty"`
 	storage        storage.Storage
 	wowDir         string
+	wowVersion     string
 	directories    map[string]addondir.Hashmap
 }
 
@@ -39,6 +40,24 @@ func (app *App) DetectWowDirectory() error {
 	return nil
 }
 
+// UpdateCurseDatabase download and import database
+func (app *App) UpdateCurseDatabase() error {
+	fmt.Println("downloading curse addon database...")
+	db, err := app.DownloadDatabase()
+	if err != nil {
+		fmt.Printf("error dowloading curse database: %s\n", err)
+		return err
+	}
+	fmt.Println("importing curse addon database...")
+	err = app.ImportCurseDB(db)
+	if err != nil {
+		fmt.Printf("error importing curse database: %s\n", err)
+		return err
+	}
+	app.StorageLastMod = time.Unix(db.Timestamp/1000, (db.Timestamp%1000)*1000000)
+	return nil
+}
+
 // ScanAddonsDirectories scan all addon folders
 func (app *App) ScanAddonsDirectories() error {
 	var err error
@@ -49,14 +68,14 @@ func (app *App) ScanAddonsDirectories() error {
 		}
 	}
 	app.directories, err = addondir.AddonDirectories(app.wowDir)
-	log.Println(len(app.directories))
-	for dir, hashes := range app.directories {
-		fmt.Println(dir)
-		for file, hash := range hashes {
-			fmt.Printf("\t- %s [%x]\n", file, hash)
-		}
+	// log.Println(len(app.directories))
+	// for dir, hashes := range app.directories {
+	// 	fmt.Println(dir)
+	// 	for file, hash := range hashes {
+	// 		fmt.Printf("\t- %s [%x]\n", file, hash)
+	// 	}
 
-	}
+	// }
 
 	return err
 }

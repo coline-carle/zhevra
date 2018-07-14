@@ -15,7 +15,7 @@ func main() {
 
 	defer app.Close()
 
-	err = app.DetectWowDirectory()
+	err = app.DetectWow()
 	if err != nil {
 		os.Exit(1)
 	}
@@ -23,5 +23,10 @@ func main() {
 	err = app.ScanAddonsDirectories()
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	err = app.UpdateCurseDatabase()
+	if err != nil {
+		os.Exit(1)
 	}
 }
